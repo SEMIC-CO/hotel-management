@@ -1,0 +1,269 @@
+:root {
+  /* --primary-color: #ff5722;
+  --secondary-color: #2c3e50;
+  --text-color: #ffffff;
+  --background-color: #f5f5f5; */
+
+  /* --primary-color: #316ff6 !important; */
+  /* --primary-color: #3366F5 !important; */
+  --primary-color: #3b82f6 !important;
+  --secondary-color: #2c3e50;
+  --text-color: #333333;
+  --text-color-second: #f1f1f1;
+  --background-color: #fafafa;
+}
+
+.p-dialog .p-dialog-header {
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+}
+
+/* .p-inputtext-sm, */
+.p-inputtext {
+  font-size: 0.875rem;
+  padding: 0.3rem 0.5rem;
+}
+.datefield > .p-inputtext {
+  width: 12rem;
+}
+
+.p-password-input {
+  padding: 0.4rem 0.5rem;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+  padding: 0.3rem 0.5rem;
+}
+
+.p-calendar {
+  display: inline-block;
+}
+.p-button-icon-only {
+  padding: 0.2rem 0.5rem !important;
+}
+.p-datepicker-trigger {
+  width: 2rem !important;
+}
+.p-autocomplete {
+  /* display: inline-flex; */
+  /* position: relative; */
+  padding: 0 !important;
+}
+
+.p-password-show-icon,
+.p-password-hide-icon {
+  right: 0.8rem;
+}
+.form-login {
+  gap: 8px;
+}
+.top-field-web::inactive {
+  top: 28%;
+}
+#password > .p-icon-field {
+  width: 100%;
+}
+.p-password-input {
+  width: 100%;
+}
+#password > .p-icon-field {
+  /* display: flex;
+  align-items: center; */
+}
+#password > .p-icon-field > span > .p-icon {
+  display: block;
+}
+#password > .p-icon-field > .p-input-icon {
+  margin-top: -0.45rem;
+}
+.p-inputotp-input {
+  width: 2.5rem;
+}
+.p-stepper.p-component.p-stepper-horizontal {
+  width: 100%;
+}
+main {
+  overflow: auto;
+}
+
+main::-webkit-scrollbar {
+  width: 8px;
+  /* height: 8px; */
+  /* display: none; */
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+main::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+main::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Cambiamos el fondo cuando esté en active */
+main::-webkit-scrollbar-thumb:active {
+  background-color: #999999;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+main::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+main::-webkit-scrollbar-track:hover,
+main::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+}
+
+/* Cambio de colores a prime react */
+.button-login {
+  background: transparent !important;
+  border-color: rgb(226 232 240 / var(--tw-border-opacity)) !important;
+}
+.p-button {
+  padding: 0.4rem 1rem;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.p-radiobutton.p-highlight .p-radiobutton-box {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.p-badge {
+  background: var(--primary-color);
+}
+
+.p-button:hover {
+  opacity: 0.8;
+  /* background: #3c82f6; */
+}
+.p-stepper .p-stepper-header.p-highlight .p-stepper-number {
+  background: var(--primary-color);
+}
+.p-megamenu
+  .p-menuitem
+  > .p-menuitem-content
+  .p-menuitem-link
+  .p-menuitem-icon {
+  color: #fff;
+}
+.p-megamenu
+  .p-menuitem
+  > .p-menuitem-content
+  .p-menuitem-link
+  .p-menuitem-text {
+  color: #fff;
+  text-align: left;
+}
+.p-megamenu-panel
+  .p-menuitem
+  > .p-menuitem-content
+  .p-menuitem-link
+  .p-menuitem-text {
+  color: #4b5563;
+}
+.p-menuitem-content svg {
+  color: #fff;
+  padding-top: 3px;
+}
+.p-megamenu-panel {
+  border-radius: 5px;
+}
+.p-megamenu-vertical {
+  color: #fff;
+  padding-top: 4px;
+}
+.spliter-aside {
+  background: var(--primary-color);
+  flex-basis: calc(0% - 4px) !important;
+}
+/* .border-none.p-menu.p-component.p-ripple-disabled {
+  background: var(--primary-color);
+} */
+div#popup_menu_right {
+  background-color: var(--background-color);
+}
+.p-submenu-header {
+  /* display: none; */
+  text-align: left;
+}
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #cccfd370;
+  color: var(--primary-color);
+}
+/* .p-menu .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover {
+  color: #4b5563;
+  background: #f5f5f533;
+} */
+.p-megamenu
+  .p-menuitem:not(.p-highlight):not(.p-disabled)
+  > .p-menuitem-content:hover {
+  color: #4b5563;
+  background-color: #f3f4f6ab;
+  border-radius: 5px;
+}
+.selected {
+  background-color: #f3f4f6ab;
+  border-radius: 5px;
+}
+/* .p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-link {
+  color: #6b7280;
+  padding: 0.6rem 1.8rem;
+  font-weight: 700;
+} */
+.p-megamenu {
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 4px !important;
+}
+
+.p-megamenu.p-megamenu-vertical {
+  width: 14rem;
+}
+.header-list {
+  text-align: left;
+  padding: 0 0 5px 0px;
+  border-bottom: 1px solid #e1dbdb;
+  margin-bottom: 9px;
+  font-weight: bold;
+  /* color: #6b7280; */
+  font-size: 20px;
+  color: var(--primary-color);
+}
+
+.header-list > h5 {
+  width: fit-content;
+  padding-right: 5px;
+  /* border-right: 1px solid #e1dbdb; */
+  font-weight: 600;
+}
+.company-name {
+  font-weight: 600;
+  font-size: 1.6rem;
+  height: 100%;
+  align-items: center;
+  align-content: center;
+}
+
+.card-dashbohard .p-card-content {
+  padding: 0;
+  /* justify-content: space-between; */
+}
+
+.loading-home {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  z-index: 20000000000000;
+  text-align: center;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}

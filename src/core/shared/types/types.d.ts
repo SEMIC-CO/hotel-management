@@ -1,0 +1,1 @@
+export type typeToast = 'success' | 'info' | 'warn' | 'error' | undefined

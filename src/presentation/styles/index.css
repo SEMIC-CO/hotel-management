@@ -1,0 +1,61 @@
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  height: 100dvh;
+  align-content: center;
+  background-color: var(--background-color);
+}
+main {
+  height: auto;
+}
+.main-web {
+  position: relative;
+  top: -10%;
+}
+
+div#pr_id_13_1 {
+  width: 80%;
+}
+
+.datalist {
+  overflow: auto;
+}
+
+.badge-xs {
+  min-width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  transform: translate(50%, -30%);
+}
+.h-50vh {
+  height: 50vh;
+}
+h1 {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+.p-card {
+  margin: 0.5rem;
+  height: fit-content;
+  /* -webkit-box-shadow: 0px 2px 5px 3px rgba(227, 224, 227, 1);
+  -moz-box-shadow: 0px 2px 5px 3px rgba(227, 224, 227, 1);
+  box-shadow: 0px 2px 5px 3px rgba(227, 224, 227, 1); */
+
+  /* -webkit-box-shadow: 0px 2px 5px 2px rgba(227, 224, 227, 1);
+  -moz-box-shadow: 0px 2px 5px 2px rgba(227, 224, 227, 1);
+  box-shadow: 0px 2px 5px 2px rgba(227, 224, 227, 1); */
+  /* box-shadow:  0px 4px 30px rgba(221, 224, 255, .54); */
+}

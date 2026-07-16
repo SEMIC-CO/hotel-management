@@ -1,0 +1,40 @@
+import {create} from 'zustand'
+import type { IStore } from '../../core/shared/types/forms'
+
+const valuesProfiles = {
+  profile: '',
+  type: ''
+}
+
+export const useProfilesStore = create<IStore>()((set) => ({
+  values: valuesProfiles,
+  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  resetState: () => set({ values: valuesProfiles })
+}))
+
+const valuesBanksAccounts = {
+  bank_account_id: '',
+  number_accounts: '',
+  type: '',
+  bank_id: 0
+}
+
+export const useBanksAccountsStore = create<IStore>()((set) => ({
+  values: valuesBanksAccounts,
+  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  resetState: () => set({ values: valuesBanksAccounts })
+}))
+
+const valuesTypeRoom = {
+  id_room_type: '',
+  name: '',
+  type: '',
+  company_id: 0,
+  center_id: 0,
+  created_by: 0
+}
+export const useTypeRoomStore = create<IStore>()((set) => ({
+  values: valuesTypeRoom,
+  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  resetState: () => set({ values: valuesTypeRoom })
+}))
