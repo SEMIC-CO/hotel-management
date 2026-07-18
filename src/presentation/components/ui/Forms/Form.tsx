@@ -13,6 +13,7 @@ import {TextArea} from '../TextArea'
 import {SearchField} from '../SearchField'
 import {OptionButton} from '../OptionButton'
 import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import { normalizeInitialValues } from '../../../../core/shared/utils/form'
 
 export interface IHandleSaveForm {
   dataForm: any
@@ -166,10 +167,13 @@ export const Form = ({
     }
   }
 
+  console.log("valuesForm", normalizeInitialValues(fields ?? [], valuesForm as Record<string, unknown>))
+
   const getFormik = () => {
     return (
       <Formik
-        initialValues={valuesForm}
+        initialValues={normalizeInitialValues(fields ?? [], valuesForm as Record<string, unknown>)}
+        // initialValues={valuesForm}
         enableReinitialize
         onSubmit={(values, form) => {
           values.center_id = user.center_id

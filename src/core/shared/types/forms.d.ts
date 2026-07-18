@@ -68,7 +68,7 @@ export interface IField {
   onSelect?: (e: any) => void
   onChange?: (e: any, rowData?: any) => void
   onBlur?: (e: any) => void
-  onChangeFunc?: (e: any) => void
+  onChangeFunc?: (e: any, form?: any) => void
   onSetValue?: (e: any) => void
   style?: CSSProperties | undefined
   severity?: 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger',

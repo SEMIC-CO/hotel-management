@@ -12,6 +12,7 @@ import {TextArea} from '../TextArea'
 import {SearchField} from '../SearchField'
 import {OptionButton} from '../OptionButton'
 import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import { normalizeInitialValues } from '../../../../core/shared/utils/form'
 
 export const FormHere = ({
   children,
@@ -140,7 +141,7 @@ export const FormHere = ({
     <>
       <Toast ref={toast} />
       <Formik
-        initialValues={valuesForm}
+        initialValues={normalizeInitialValues(fields ?? [], valuesForm as Record<string, unknown>)}
         enableReinitialize
         onSubmit={(values) => {
           values.center_id = user.center_id

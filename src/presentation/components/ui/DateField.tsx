@@ -32,11 +32,11 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
   // console.log('helpers', helpers)
 
   useEffect(() => {
-    if (meta.error) {
+    if (meta.touched) {
       setValue('')
       setDate(undefined)
     }
-  }, [meta.error && meta.value])
+  }, [meta.error && meta.touched])
 
   useEffect(() => {
     if (typeof meta.value !== 'undefined') {

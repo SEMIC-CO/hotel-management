@@ -72,6 +72,21 @@ class BookingsServices implements IBookingRepository {
     }
   }
 
+  saveAdvance = async (data: IBookings) => {
+    let service = 'advancePayments'
+    let method = 'POST'
+    if (typeof data.key !== 'undefined') {
+      service = `advancePayments/${data.key}`
+      method = 'PATCH'
+    }
+    const resp = await useFetch(service, { ...data }, method)
+    await validateSession(resp)
+    const body = (await resp.json()) as Body & IRespSuccess
+    if (resp.ok) {
+      return body
+    }
+  }
+
   confirmReservation = async (booking_id: number) => {
     const resp = await useFetch(`reservations/confirm/${booking_id}`, { state: 'RESERVADA' }, 'PATCH')
     await validateSession(resp)

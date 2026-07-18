@@ -1,9 +1,10 @@
-import {useCallback, useEffect, useState} from 'react'
-import {useContainer} from '../../../hooks/useContainer'
-import {useList} from '../../../hooks/useList'
-import {createParamsUrl} from '../../../../core/shared/utils/utils'
+import { useCallback, useEffect, useState } from 'react'
+import { useContainer } from '../../../hooks/useContainer'
+import { useList } from '../../../hooks/useList'
+import { createParamsUrl } from '../../../../core/shared/utils/utils'
 import type { IBookings } from '../../../../core/shared/types/data'
-import {useBookingStore} from '../../../../infrastructure/stores/booking.store'
+import { useBookingStore } from '../../../../infrastructure/stores/booking.store'
+import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
 
 export const useBookingsList = () => {
   const { bookingRepository } = useContainer()
@@ -25,6 +26,7 @@ export const useBookingsList = () => {
   const [showFormInvoice, setShowFormInvoice] = useState(false)
   const [showFormAdvance, setShowFormAdvance] = useState(false)
   const { updateState } = useBookingStore()
+  const updateStateAdvance = useAdvancesStore(state => state.updateState)
 
   const refreshList = useCallback(() => {
     setLoading(true)
@@ -66,10 +68,17 @@ export const useBookingsList = () => {
 
   const onFormAdvance = useCallback(
     (row: IBookings) => {
+      console.log("onFormAdvance Bookings", row);
+      
       setShowFormAdvance(true)
-      updateState(row)
+      updateStateAdvance({
+        booking_id: row.booking_id,
+        total_reservation: row.total_reservation,
+        payment_date: new Date()
+      })
     },
-    [updateState]
+
+    [updateStateAdvance]
   )
 
   const onActionForm = useCallback(() => {

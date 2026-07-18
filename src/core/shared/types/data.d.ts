@@ -58,7 +58,8 @@ export interface IBookings {
   val_room?: number
   total_days: number
   total_amount_pay: number
-  status: string
+  status: string,
+  total_reservation: number | string
 }
 export interface IEntries {
   key?: number | string

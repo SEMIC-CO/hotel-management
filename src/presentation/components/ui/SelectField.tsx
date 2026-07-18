@@ -1,4 +1,4 @@
-import {ErrorMessage, useField} from 'formik'
+import {ErrorMessage, useField, useFormikContext} from 'formik'
 import {Dropdown, type DropdownChangeEvent} from 'primereact/dropdown'
 import {useEffect, useState} from 'react'
 import type { IField, IOptionsRadio, IOptionsSelect } from '../../../core/shared/types/forms'
@@ -7,10 +7,15 @@ import {isInvalid} from '../../../core/shared/utils/utils'
 export const SelectField = ({ label, ...props }: IField) => {
   const [select, setSelected] = useState<IOptionsSelect | IOptionsRadio>()
   const [{ onChange, ...field }, meta, helpers] = useField({ ...props })
+  const form = useFormikContext()
 
   useEffect(() => {
     const options = props.options ?? []
-    const selectOption = options.find((option) => option?.code === field.value)
+    const isEmptyValue =
+      field.value === '' || field.value === null || field.value === undefined
+    const selectOption = isEmptyValue
+      ? undefined
+      : options.find((option) => option?.code === field.value)
     setSelected(selectOption)
     if (
       typeof props.onChangeFunc !== 'undefined' &&
@@ -20,13 +25,17 @@ export const SelectField = ({ label, ...props }: IField) => {
     }
   }, [field.value])
 
+  console.log("SelectField field", field);
+  console.log("SelectField props", props);
+  
+
   const { setValue } = helpers
 
   const setValueSelected = (e: DropdownChangeEvent) => {
     setValue(e.value.code)
     setSelected(e.value)
     if (typeof props.onChangeFunc !== 'undefined') {
-      props.onChangeFunc(e)
+      props.onChangeFunc(e, form)
     }
   }
 
