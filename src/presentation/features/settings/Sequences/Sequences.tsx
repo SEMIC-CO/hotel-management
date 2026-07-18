@@ -17,15 +17,15 @@ export const Sequences = () => {
   useEffect(() => {
     list.setColumns([
       { label: 'Id', name: 'sequence_id', filter: true, sort: true, width: '2rem' },
-      { label: 'Typo de docuemnto', name: 'document_type', filter: true, sort: true, width: '10rem' },
+      { label: 'Tipo de documento', name: 'document_type', filter: true, sort: true, width: '10rem' },
       { label: 'Nombre de consecutivo', name: 'sequence_name', filter: true, width: '10rem' },
       { label: 'Prefijo', name: 'prefix', filter: true, width: '3rem' },
-      { label: 'Numero inicial', name: 'start_number', filter: true, width: '10rem' },
-      { label: 'Numero final', name: 'end_number', filter: true, width: '10rem' },
-      { label: 'Consecutivo max actual', name: 'current_number', filter: true, width: '10rem' },
+      { label: 'Número inicial', name: 'start_number', filter: true, width: '10rem' },
+      { label: 'Número final', name: 'end_number', filter: true, width: '10rem' },
+      { label: 'Consecutivo máximo actual', name: 'current_number', filter: true, width: '10rem' },
       { label: 'Número de la resolución', name: 'resolution_number', filter: true, width: '10rem' },
-      { label: 'Valido desde', name: 'valid_from', filter: true, width: '10rem' },
-      { label: 'Valido hasta', name: 'valid_to', filter: true, width: '10rem' },
+      { label: 'Válido desde', name: 'valid_from', filter: true, width: '10rem' },
+      { label: 'Válido hasta', name: 'valid_to', filter: true, width: '10rem' },
       { label: 'Activado', name: 'is_active', filter: true, width: '10rem' }
     ])
   }, [])

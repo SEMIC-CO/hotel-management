@@ -39,6 +39,9 @@ export const useInvoiceForm = ({
       `?booking_id=${valueState.booking_id}`
     )
 
+    console.log("useInvoiceform", respListRooms);
+    
+
     const roomsReservations = respListRooms.rooms_reservations ?? []
 
     const listRooms = roomsReservations.map((room: any) => ({

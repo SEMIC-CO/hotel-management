@@ -18,7 +18,7 @@ export const BanksAccount = () => {
     list.setColumns([
       { label: 'Id', name: 'bank_account_id', filter: true, sort: true, width: '2rem' },
       { label: 'Banco', name: 'bank_name', filter: true, sort: true, width: '10rem' },
-      { label: 'Numero de cuenta', name: 'number_accounts', filter: true, sort: true, width: '10rem' },
+      { label: 'Número de cuenta', name: 'number_accounts', filter: true, sort: true, width: '10rem' },
       { label: 'Tipo de cuenta', name: 'type', filter: true, width: '10rem' }
     ])
   }, [])

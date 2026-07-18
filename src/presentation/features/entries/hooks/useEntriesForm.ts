@@ -26,8 +26,8 @@ export const useEntriesForm = ({
   const resetState = useEntriesStore((state) => state.resetState)
 
   const itemsRadio = [
-    { id: 'val_min', label: 'Val Minimo: 0', value: 0 },
-    { id: 'val_max', label: 'Val Maximo: 0', value: 0 }
+    { id: 'val_min', label: 'Val mínimo: 0', value: 0 },
+    { id: 'val_max', label: 'Val máximo: 0', value: 0 }
   ]
 
   const [rooms, setRooms] = useState<IOptionsSelect[]>([])
@@ -107,12 +107,12 @@ export const useEntriesForm = ({
     setOptionRadio([
       {
         id: 'val_min',
-        label: `Val Minimo: $${e.value.val_min}`,
+        label: `Val mínimo: $${e.value.val_min}`,
         value: e.value.val_min
       },
       {
         id: 'val_max',
-        label: `Val Minimo: $${e.value.val_max}`,
+        label: `Val máximo: $${e.value.val_max}`,
         value: e.value.val_max
       }
     ])

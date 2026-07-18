@@ -20,7 +20,7 @@ export const Bookings = () => {
         command: () => list.update(list.selectedRow)
       },
       list.selectedRow?.state == 'INGRESO' && {
-        label: 'Facturar estadia',
+        label: 'Facturar estadía',
         icon: 'pi pi-fw pi-print',
         command: () => list.onFormInvoice(list.selectedRow)
       },

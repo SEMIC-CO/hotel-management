@@ -38,6 +38,8 @@ export const useBookingsList = () => {
     bookingRepository
       .get(urlParams)
       .then((resp) => {
+        console.log(resp);
+        
         setData(resp ?? [])
       })
       .finally(() => {
@@ -69,12 +71,10 @@ export const useBookingsList = () => {
   const onFormAdvance = useCallback(
     (row: IBookings) => {
       console.log("onFormAdvance Bookings", row);
-      
       setShowFormAdvance(true)
       updateStateAdvance({
         booking_id: row.booking_id,
-        total_reservation: row.total_reservation,
-        payment_date: new Date()
+        total: row.total,
       })
     },
 
@@ -134,13 +134,16 @@ export const useBookingsList = () => {
   const columns = [
     { label: 'Id', name: 'booking_id', filter: true, sort: true, width: '2rem' },
     { label: 'Habitacion', name: 'no_room', width: '10rem', type: 'tag, tooltip' },
-    { label: 'No Documento', name: 'no_document', filter: true, sort: true, width: '10rem' },
+    { label: 'No Documento', name: 'no_document', filter: true, sort: true, width: '8rem' },
     { label: 'Cliente', name: 'customer_name', type: 'text', filter: true, sort: true, width: '10rem' },
     { label: 'Fecha Entrada', name: 'entry_date', filter: true, sort: true, width: '15rem' },
     { label: 'Fecha Salida', name: 'exit_date', filter: true, sort: true, width: '15rem' },
     { label: 'Días', name: 'total_days', sort: true, width: '5rem' },
-    { label: 'Total reserva', name: 'total_reservation', type: 'money', filter: true, sort: true, width: '10rem' },
+    { label: 'Valor reserva', name: 'total_reservation', type: 'money', filter: true, sort: true, width: '10rem' },
     { label: 'Estado', name: 'state', filter: true, sort: true, width: '10rem', type: 'tag' },
+    { label: 'Otros servicios', name: 'total_others_services', type: 'money', filter: true, sort: true, width: '10rem' },
+    { label: 'Valor anticipo', name: 'value_advance', type: 'money', filter: true, sort: true, width: '10rem' },
+    { label: 'Total', name: 'total', type: 'money', filter: true, sort: true, width: '10rem' },
     { label: 'Observaciones', name: 'observations', type: 'tooltip' },
     { label: 'No Factura', name: 'invoice_number', type: 'tooltip', width: '10rem' },
     { label: 'Tipo', name: 'type', filter: true, sort: true, width: '10rem' }

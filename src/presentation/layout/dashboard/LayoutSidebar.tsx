@@ -101,12 +101,12 @@ export function LayoutSidebar({ setTitle }: LayoutSidebarProps) {
       }
     },
     {
-      label: 'Huespedes',
+      label: 'Huéspedes',
       icon: 'pi pi-users',
       className: location.pathname.includes('customers') ? 'selected' : '',
       command: () => {
         navigate('customers')
-        setTitle('Huespedes')
+        setTitle('Huéspedes')
       }
     },
     {

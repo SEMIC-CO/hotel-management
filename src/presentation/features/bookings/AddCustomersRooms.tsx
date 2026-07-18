@@ -226,7 +226,7 @@ export const AddCustomersRooms = ({
 
   const columns: IColumns[] = [
     {
-      label: 'Actions',
+      label: 'Acciones',
       name: 'actions',
       body: bodyTemplateActions
     },
@@ -236,7 +236,7 @@ export const AddCustomersRooms = ({
   const headerElement = (
     <div className='inline-flex align-items-center justify-content-center gap-2 bor'>
       <span className='font-bold white-space-nowrap'>
-        Registrar huespedes en habitaciones
+        Registrar huéspedes en habitaciones
       </span>
     </div>
   )

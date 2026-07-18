@@ -68,7 +68,7 @@ export const useEntriesList = () => {
 
   const columns = [
     { label: 'Id', name: 'entry_id', filter: true, sort: true, width: '2rem' },
-    { label: 'Habitacion', name: 'no_room', filter: true, sort: true, width: '10rem' },
+    { label: 'Habitación', name: 'no_room', filter: true, sort: true, width: '10rem' },
     { label: 'No Documento', name: 'no_document', filter: true, sort: true, width: '10rem' },
     { label: 'Cliente', name: 'customer', filter: true, sort: true, width: '10rem' },
     { label: 'Fecha Entrada', name: 'entry_date', filter: true, sort: true, width: '15rem' },

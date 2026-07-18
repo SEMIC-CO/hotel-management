@@ -51,7 +51,7 @@ export const useInvoicesList = () => {
     { label: 'Otros servicios', name: 'other_services', filter: true, sort: true, width: '10rem' },
     { label: 'Subtotal', name: 'subtotal', filter: true, sort: true, width: '10rem' },
     { label: 'Total', name: 'total', filter: true, sort: true, width: '10rem' },
-    { label: 'Metodo de pago', name: 'payment_method', type: 'text', filter: true, sort: true, width: '10rem' }
+    { label: 'Método de pago', name: 'payment_method', type: 'text', filter: true, sort: true, width: '10rem' }
   ]
 
   const contextMenu = {
@@ -59,7 +59,7 @@ export const useInvoicesList = () => {
     setSelectedRow,
     menu: [
       selectedRow?.status == 'PENDIENTE' && {
-        label: 'Transmitir factuara',
+        label: 'Transmitir factura',
         icon: 'pi pi-fw pi-plus',
         command: () => console.log('Agregar anticipo')
       }

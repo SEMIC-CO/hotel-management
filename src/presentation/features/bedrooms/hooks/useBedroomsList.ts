@@ -77,8 +77,8 @@ export const useBedroomsList = () => {
   const columns = [
     { name: 'room_id', label: 'id', filter: true, sort: true, width: '2rem' },
     { name: 'no_room', label: 'No Habitación', filter: true, sort: true, width: '10rem' },
-    { name: 'val_min', label: 'Valor Minimo', type: 'money', filter: true, sort: true, width: '10rem' },
-    { name: 'val_max', label: 'Valor Maximo', type: 'money', filter: true, sort: true, width: '10rem' },
+    { name: 'val_min', label: 'Valor mínimo', type: 'money', filter: true, sort: true, width: '10rem' },
+    { name: 'val_max', label: 'Valor máximo', type: 'money', filter: true, sort: true, width: '10rem' },
     { name: 'room_type', label: 'Tipo de habitación', filter: true, sort: true, width: '10rem', hidden: true },
     { name: 'room_type_name', label: 'Tipo de habitación', filter: true, sort: true, width: '10rem' },
     { name: 'description', label: 'Descripción', filter: false, width: '20rem' },

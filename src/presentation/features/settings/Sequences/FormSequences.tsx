@@ -34,31 +34,31 @@ export const FormSequences = ({ onActionForm, showForm, setShowForm }: IShow) =>
       required: true
     },
     {
-      label: 'Numero inicial',
-      placeholder: 'Numero inicial',
+      label: 'Número inicial',
+      placeholder: 'Número inicial',
       name: 'start_number',
       type: 'text',
       keyfilter: 'int',
       required: true
     },
     {
-      label: 'Numero final',
-      placeholder: 'Numero final',
+      label: 'Número final',
+      placeholder: 'Número final',
       name: 'end_number',
       type: 'text',
       keyfilter: 'int',
       required: true
     },
     {
-      label: 'Numero de la resolución',
-      placeholder: 'Numero de la resolución',
+      label: 'Número de la resolución',
+      placeholder: 'Número de la resolución',
       name: 'resolution_number',
       type: 'text',
       keyfilter: 'int',
       required: true
     },
     {
-      label: 'Valido desde',
+      label: 'Válido desde',
       name: 'valid_from',
       type: 'date',
       required: true

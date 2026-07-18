@@ -9,7 +9,7 @@ import type {
 import { useToast } from '../../../hooks/useToast'
 import { useContainer } from '../../../hooks/useContainer'
 import { useSessionStore } from '../../../../infrastructure/stores/session.store'
-import { createParamsUrl } from '../../../../core/shared/utils/utils'
+import { createParamsUrl, formatCurrency, parseCurrency } from '../../../../core/shared/utils/utils'
 import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
 import bookings from '../../../../infrastructure/api/services/BookingsServices'
 
@@ -84,6 +84,14 @@ export const useAdvanceForm = ({
     }
   }
 
+  const validationAmount = (e: any, form: any) => {
+    console.log("validationAmount", parseCurrency(e.target.value))
+    if (parseCurrency(e.target.value) > valuesState.total) {
+      form.setFieldValue('amount', 0)
+      showToast(`El valor del anticipo, no puede ser mayor al total de la reserva ${formatCurrency(valuesState.total)}`, 'error')
+    }
+  }
+
 
 
   const fields: IField[] = [
@@ -95,10 +103,11 @@ export const useAdvanceForm = ({
     {
       label: 'Valor de anticipo',
       name: 'amount',
-      type: 'number'
+      type: 'number',
+      onBlur: validationAmount
     },
     {
-      label: 'Metodo de pago',
+      label: 'Método de pago',
       name: 'payment_method',
       type: 'select',
       placeholder: 'Seleccione',
@@ -117,7 +126,7 @@ export const useAdvanceForm = ({
       disabled: disabled
     },
     {
-      label: 'Referencia de tranferencia',
+      label: 'Referencia de transferencia',
       name: 'reference', type: 'text',
       disabled: disabled
     },

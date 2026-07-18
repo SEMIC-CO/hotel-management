@@ -25,8 +25,8 @@ export const SelectField = ({ label, ...props }: IField) => {
     }
   }, [field.value])
 
-  console.log("SelectField field", field);
-  console.log("SelectField props", props);
+  // console.log("SelectField field", field);
+  // console.log("SelectField props", props);
   
 
   const { setValue } = helpers

@@ -67,7 +67,7 @@ export interface IField {
   showTime?: boolean
   onSelect?: (e: any) => void
   onChange?: (e: any, rowData?: any) => void
-  onBlur?: (e: any) => void
+  onBlur?: (e: any, form?: any) => void
   onChangeFunc?: (e: any, form?: any) => void
   onSetValue?: (e: any) => void
   style?: CSSProperties | undefined

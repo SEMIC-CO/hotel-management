@@ -14,7 +14,7 @@ const valuesAdvances = {
     status: '',
     created_by: '',
     created_at: '',
-    total_reservation: 0
+    total: 0
 }
 
 export const useAdvancesStore = create<IStore>()((set) => ({

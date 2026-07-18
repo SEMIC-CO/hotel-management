@@ -21,8 +21,8 @@ export const FormBanksAccount = ({ onActionForm, showForm, setShowForm }: IShow)
       required: true
     },
     {
-      label: 'Numero de cuenta',
-      placeholder: 'Numero de cuenta',
+      label: 'Número de cuenta',
+      placeholder: 'Número de cuenta',
       name: 'number_accounts',
       type: 'text',
       keyfilter: 'int',

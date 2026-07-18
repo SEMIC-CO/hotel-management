@@ -33,7 +33,8 @@ export const parseCurrency = (value: string): number => {
 
   let cleanValue = value.replace(/[$\s]/g, '');
   cleanValue = cleanValue.replace(/\./g, '');
-  cleanValue = cleanValue.replace(',', '.');
+  cleanValue = cleanValue.replace(',', '');
+  
   const result = parseFloat(cleanValue);
 
   return isNaN(result) ? 0 : result;

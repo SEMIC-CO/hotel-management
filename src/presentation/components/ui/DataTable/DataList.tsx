@@ -47,6 +47,8 @@ export const DataList = ({
   const cm = useRef<ContextMenu>(null)
 
   const formatCurrency = (value: number) => {
+    if (value === null) value = 0
+    value = Number(value)
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
   }
 
