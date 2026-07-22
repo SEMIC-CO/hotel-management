@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 // import { IEntries } from '../types/data'
 import type { IStore } from '../../core/shared/types/forms'
+import dayjs from 'dayjs'
 
 const valuesAdvances = {
     id: '',
     booking_id: '',
     amount: 0,
-    payment_date: '',
+    payment_date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     payment_method: '',
     bank_account_id: '',
     reference: '',

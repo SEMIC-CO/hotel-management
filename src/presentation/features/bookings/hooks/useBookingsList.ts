@@ -25,6 +25,7 @@ export const useBookingsList = () => {
 
   const [showFormInvoice, setShowFormInvoice] = useState(false)
   const [showFormAdvance, setShowFormAdvance] = useState(false)
+  const [showFormOthers, setShowFormOthers] = useState(false)
   const { updateState } = useBookingStore()
   const updateStateAdvance = useAdvancesStore(state => state.updateState)
 
@@ -62,7 +63,7 @@ export const useBookingsList = () => {
 
   const onFormInvoice = useCallback(
     (row: IBookings) => {
-      setShowFormInvoice(true)
+      setShowFormOthers(true)
       updateState(row)
     },
     [updateState]
@@ -77,7 +78,18 @@ export const useBookingsList = () => {
         total: row.total,
       })
     },
+    [updateStateAdvance]
+  )
 
+  const onFormOtherServices = useCallback(
+    (row: IBookings) => {
+      console.log("onFormAdvance Bookings", row);
+      setShowFormOthers(true)
+      updateStateAdvance({
+        booking_id: row.booking_id,
+        total: row.total,
+      })
+    },
     [updateStateAdvance]
   )
 
@@ -160,12 +172,15 @@ export const useBookingsList = () => {
     setShowFormInvoice,
     showFormAdvance,
     setShowFormAdvance,
+    showFormOthers,
+    setShowFormOthers,
     action,
     setAction,
     columns,
     update,
     onFormInvoice,
     onFormAdvance,
+    onFormOtherServices,
     onActionForm,
     confirmReservation,
     cancelReservation,

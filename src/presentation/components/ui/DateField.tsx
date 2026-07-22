@@ -4,7 +4,7 @@ import {addLocale} from 'primereact/api'
 import {ErrorMessage, useField} from 'formik'
 import {isInvalid} from '../../../core/shared/utils/utils'
 import type { Nullable } from 'primereact/ts-helpers'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 interface Props {
   label: string
@@ -39,32 +39,39 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
   }, [meta.error && meta.touched])
 
   useEffect(() => {
-    if (typeof meta.value !== 'undefined') {
-      const parsed = new Date(meta.value)
-      if (!isNaN(parsed.getTime())) {
-        setDate(parsed)
-      }
+    if (typeof meta.value === 'undefined') return
+    if (meta.value === '' || meta.value === null) {
+      setDate(undefined)
+      return
     }
-    if (typeof props.date !== 'undefined') {
-      setDate(props.date)
-      const dateFormat = moment(props.date).format('YYYY-MM-DD HH:mm:ss')
-      setValue(dateFormat)
-      if (typeof onSetValue === 'function') {
-        onSetValue(dateFormat)
-      }
+    const parsed = dayjs(meta.value)
+    if (parsed.isValid()) {
+      setDate(parsed.toDate())
     }
-    if (meta.initialValue && meta.initialValue !== '') {
-      const parsed = new Date(meta.initialValue)
-      if (!isNaN(parsed.getTime())) {
-        setDate(parsed)
-      }
+  }, [meta.value])
+
+  useEffect(() => {
+    if (typeof props.date === 'undefined') return
+    setDate(props.date)
+    const dateFormat = dayjs(props.date).format('YYYY-MM-DD HH:mm:ss')
+    setValue(dateFormat)
+    if (typeof onSetValue === 'function') {
+      onSetValue(dateFormat)
     }
-  }, [meta.value, meta.initialValue, props.date])
+  }, [props.date])
+
+  useEffect(() => {
+    if (!meta.initialValue || meta.initialValue === '') return
+    const parsed = dayjs(meta.initialValue)
+    if (parsed.isValid()) {
+      setDate(parsed.toDate())
+    }
+  }, [meta.initialValue])
 
   const handleFormatDate = (value: Nullable<string | Date | Date[]>) => {
     if (value instanceof Date && !isNaN(value.getTime())) {
       setDate(value)
-      const dateFormat = moment(value).format('YYYY-MM-DD HH:mm:ss')
+      const dateFormat = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
       setValue(dateFormat)
       if (typeof onSetValue === 'function') {
         onSetValue(dateFormat)
@@ -75,14 +82,14 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
   const onHide = () => {
      if (!date) return
 
-    const dateFormat = moment(date).format('YYYY-MM-DD HH:mm:ss')
+    const dateFormat = dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     if (typeof onCommitValue === 'function') {
       onCommitValue(dateFormat)
     }
   }
   // const onHide = () => {
   //   if (typeof onSetValue === 'function') {
-  //     const dateFormat = moment(date).format('YYYY-MM-DD HH:mm:ss')
+  //     const dateFormat = dayjs(date).format('YYYY-MM-DD HH:mm:ss')
   //     onSetValue(dateFormat)
   //   }
   // }

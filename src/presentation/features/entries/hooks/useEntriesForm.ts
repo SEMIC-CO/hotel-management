@@ -12,7 +12,7 @@ import type {
 import type { IEntries } from '../../../../core/shared/types/data'
 import {useEntriesStore} from '../../../../infrastructure/stores/entries.store'
 import {useContainer} from '../../../hooks/useContainer'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export const useEntriesForm = ({
   onActionForm,
@@ -58,8 +58,8 @@ export const useEntriesForm = ({
     if (valueState.entry_date === '' || valueState.exit_date === '') {
       days = 0
     } else {
-      const dateInit = moment(valueState.entry_date)
-      const dateEnd = moment(valueState.exit_date)
+      const dateInit = dayjs(valueState.entry_date)
+      const dateEnd = dayjs(valueState.exit_date)
       days = dateEnd.diff(dateInit, 'days')
     }
     updateState({

@@ -5,7 +5,7 @@ import Loading from '../../components/ui/UX/Loading'
 import {useAdvanceForm} from './hooks/useAdvanceForm'
 import { useAdvancesStore } from '../../../infrastructure/stores/advances.store'
 
-export const FormAdavances = ({
+export const FormAdvances = ({
   onActionForm,
   showForm,
   setShowForm

@@ -2,8 +2,9 @@ import { Toast } from 'primereact/toast'
 import { DataList } from '../../components/ui/DataTable/DataList'
 import { FormBooking } from './FormBooking'
 import { FormInvoice } from './FormInvoice'
-import { FormAdavances } from './FormAdavances'
+import { FormAdvances } from './FormAdvances'
 import { useBookingsList } from './hooks/useBookingsList'
+import { FormOtherServices } from './FormOtherServices'
 
 export const Bookings = () => {
   const list = useBookingsList()
@@ -19,10 +20,16 @@ export const Bookings = () => {
         icon: 'pi pi-fw pi-pencil',
         command: () => list.update(list.selectedRow)
       },
-      list.selectedRow?.state == 'INGRESO' && {
+      list.selectedRow?.state == 'INGRESO' && 
+      {
         label: 'Facturar estadía',
         icon: 'pi pi-fw pi-print',
         command: () => list.onFormInvoice(list.selectedRow)
+      },
+      {
+        label: 'Agregar otros servicios',
+        icon: 'pi pi-fw pi-list',
+        command: () => list.onFormOtherServices(list.selectedRow)
       },
       list.selectedRow?.state == 'PENDIENTE CONFIRMAR' && {
         label: 'Confirmar reserva',
@@ -58,10 +65,15 @@ export const Bookings = () => {
           showForm={list.showFormInvoice}
           setShowForm={list.setShowFormInvoice}
         />
-        <FormAdavances
+        <FormAdvances
           onActionForm={list.onActionForm}
           showForm={list.showFormAdvance}
           setShowForm={list.setShowFormAdvance}
+        />
+        <FormOtherServices
+          onActionForm={list.onActionForm}
+          showForm={list.showFormOthers}
+          setShowForm={list.setShowFormOthers}
         />
         <DataList
           setShowForm={list.setShowForm}

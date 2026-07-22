@@ -7,7 +7,7 @@ import type {
   ISearch,
   IShow
 } from '../../../../core/shared/types/forms'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {useBookingStore} from '../../../../infrastructure/stores/booking.store'
 import {useSessionStore} from '../../../../infrastructure/stores/session.store'
 import {AddRoomReservations, type IGuestsRooms, type IReservation, type IRoomAvailability} from '../AddRoomReservations'
@@ -133,8 +133,8 @@ export const useBookingForm = ({
       updateState({ total_days: 0, total_reservation: 0 })
       return
     }
-    const dateInit = moment(valueState.entry_date)
-    const dateEnd = moment(valueState.exit_date)
+    const dateInit = dayjs(valueState.entry_date)
+    const dateEnd = dayjs(valueState.exit_date)
     let days = dateEnd.diff(dateInit, 'days')
     days = days === 0 ? 1 : days
     updateState({
