@@ -16,7 +16,7 @@ export const HeaderList = ({
   setAction
 }: IHeadListProps) => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('')
-  const { refresh, showFilters, cleanFilters } = actionsButtons
+  const { refresh, cleanFilters } = actionsButtons
 
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -126,15 +126,6 @@ export const HeaderList = ({
           tooltip='Actualizar'
           onClick={() => refresh()}
         />
-        {typeof showFilters !== 'undefined' && (
-          <Button
-            type='button'
-            icon='pi pi-filter'
-            rounded
-            tooltip='Filtros'
-            onClick={() => console.log('prueba')}
-          />
-        )}
       </section>
       <IconField>
         <InputIcon className='pi pi-search'> </InputIcon>

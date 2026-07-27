@@ -8,8 +8,10 @@ const valuesCenters = {
   city: ''
 }
 
-export const useCentersStore = create<IStore>()((set) => ({
+export type CentersFormValues = typeof valuesCenters
+
+export const useCentersStore = create<IStore<CentersFormValues>>()((set) => ({
   values: valuesCenters,
-  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesCenters })
 }))

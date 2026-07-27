@@ -13,13 +13,9 @@ export const SearchField = ({ label, ...props }: IField) => {
   const filter = typeof props.filter !== 'undefined' ? props.filter : 'name'
   useEffect(() => {
     const items = props.items ?? []
-    console.log(props)
-    // const filterVal = items.find((item) => item.name === field.value)
     const filterVal = items.find((item) => item[filter] === field.value)
     setSelected(filterVal)
     setValue(filterVal?.code)
-    // console.log(filterVal)
-    // console.log(field)
   }, [])
 
   const setValueSelected = (e: AutoCompleteChangeEvent) => {
@@ -40,14 +36,11 @@ export const SearchField = ({ label, ...props }: IField) => {
             .startsWith(event.query.toLowerCase())
         })
       }
-      // console.log(_filteredCountries)
       setFilteredCountries(_filteredCountries)
     }, 250)
   }
 
   const onChangeSearch = (e: AutoCompleteChangeEvent) => {
-    console.log('onChange')
-
     setValueSelected(e)
   }
 

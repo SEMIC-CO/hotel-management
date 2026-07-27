@@ -1,7 +1,27 @@
 import {create} from 'zustand'
-import type { IStore } from '../../core/shared/types/forms'
+import type { IStore, IOptionsSelect } from '../../core/shared/types/forms'
 
-export const IvaluesRegister = {
+export interface RegisterFormValues {
+  user: {
+    names: string
+    surnames: string
+    cell_phone: string
+    email: string
+    address: string
+    password: string
+  }
+  company: {
+    company_name: string
+    nit: string
+    email: string
+    phone: string
+    country: IOptionsSelect | string
+    city: IOptionsSelect | string
+    address: string
+  }
+}
+
+export const IvaluesRegister: RegisterFormValues = {
   user: {
     names: '',
     surnames: '',
@@ -21,8 +41,8 @@ export const IvaluesRegister = {
   }
 }
 
-export const useRegisterStore = create<IStore>()((set) => ({
+export const useRegisterStore = create<IStore<RegisterFormValues>>()((set) => ({
   values: IvaluesRegister,
-  updateState: (newValues) => set(({ values: { ...newValues, ...newValues } })),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: IvaluesRegister })
 }))

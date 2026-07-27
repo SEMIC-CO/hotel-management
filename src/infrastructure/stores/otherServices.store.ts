@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-// import { IEntries } from '../types/data'
 import type { IStore } from '../../core/shared/types/forms'
 import dayjs from 'dayjs'
 
@@ -13,10 +12,13 @@ const valuesOthers = {
     total_value: 0,
     observations: '',
     created_by: '',
-    created_at: ''
+    created_at: '',
+    total: 0
 }
 
-export const useOtherServicesStore = create<IStore>()((set) => ({
+export type OtherServicesFormValues = typeof valuesOthers
+
+export const useOtherServicesStore = create<IStore<OtherServicesFormValues>>()((set) => ({
     values: valuesOthers,
     updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
     resetState: () => set({ values: valuesOthers })

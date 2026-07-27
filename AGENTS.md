@@ -39,12 +39,15 @@ Components and hooks **must** get services through `useContainer()` from `presen
 ### HTTP and session
 
 - All backend calls go through `useFetch(endpoint, data, method)` in `infrastructure/api/client/httpClient.tsx`. It prepends `VITE_URL_API` and sends `credentials: 'include'`. There is no axios, no interceptors, no wrapper — just `fetch`.
-- After every service call, await `validateSession(resp)` (`infrastructure/auth/sessionManager.ts`); on HTTP 401 it clears the session store and hard-redirects to `/web/login`. Keep this pattern in new services.
+- After every service call, await `validateSession(resp)` (`infrastructure/auth/sessionManager.ts`); on HTTP 401 it clears the session store and hard-redirects to `APP_ROUTES.LOGIN`. Keep this pattern in new services.
 - Session state lives in `infrastructure/stores/session.store.ts` (Zustand). The `Routers` component bootstraps auth on mount via `authRepository.verifySession()` -> fall back to `refreshToken()`.
+- To read the authenticated user inside `/app`, use `useUser()` from `presentation/hooks/useUser.ts` (returns a non-null `IUsers`); do not destructure `user` from the session store in every component.
 
 ### State
 
-Global state is Zustand (`infrastructure/stores/*`). Each store follows the `IStore` shape: `{ values, updateState(patch), resetState(next?) }`. Feature/form state uses Formik + Yup; `presentation/hooks/useForm.ts` and per-feature `hooks/use*Form.ts` bridge Formik with Zustand.
+Global state is Zustand (`infrastructure/stores/*`). Each store is typed as `IStore<T>` from `core/shared/types/forms.d.ts` (`{ values: T, updateState(patch), resetState(next?) }`) and exports its values type (e.g. `BookingFormValues`). Feature/form state uses Formik + Yup; per-feature `hooks/use*Form.ts` bridge Formik with Zustand.
+
+Formik's `initialValues` come from the store via `normalizeInitialValues(fields, valuesForm)` in `components/ui/Forms/Form.tsx` with `enableReinitialize`, so the store is the single source of truth for initial form values — do not add `useEffect` bridges that `setValue(props.value)` inside field components.
 
 ## Routing
 
@@ -53,11 +56,11 @@ Global state is Zustand (`infrastructure/stores/*`). Each store follows the `ISt
 - `/web/*` — public, wrapped by `PublicRoutes` (renders `Login`).
 - `/app/*` — protected, wrapped by `ProtectedRoutes`, which redirects to `/web` when `useSessionStore` is unauthenticated.
 
-Both branches are mounted under one `BrowserRouter`; navigation between `/web` and `/app` is a client-side route change, not a full reload.
+Both branches are mounted under one `BrowserRouter`; navigation between `/web` and `/app` is a client-side route change, not a full reload. Use the route/state constants in `core/shared/utils/constants.ts` (`APP_ROUTES`, `BOOKING_STATE`) instead of hardcoding `/web`, `/app` or reservation-state strings.
 
 ## Styling
 
-Tailwind + PrimeReact coexist. CSS layering in `src/presentation/styles/index.css` (imports go through `src/app/main.tsx`): `@layer tailwind-base, primereact, tailwind-utilities` — PrimeReact sits between base and utilities, so utility classes can override PrimeReact. `tailwind.config.js` `content` includes `node_modules/primereact/**`; do not remove that or PrimeReact class usage will be purged. There are dual date libs (`dayjs` and `moment`) — match the lib already used in the file you're editing rather than introducing a third path.
+Tailwind + PrimeReact coexist. CSS layering in `src/presentation/styles/index.css` (imports go through `src/app/main.tsx`): `@layer tailwind-base, primereact, tailwind-utilities` — PrimeReact sits between base and utilities, so utility classes can override PrimeReact. `tailwind.config.js` `content` includes `node_modules/primereact/**`; do not remove that or PrimeReact class usage will be purged. Dates use `dayjs` only (moment was removed; do not reintroduce it). Currency helpers live in `core/shared/utils/utils.ts` (`formatCurrency` / `parseCurrency`) — use them instead of writing local copies.
 
 ## TypeScript
 
@@ -75,3 +78,5 @@ Flat config in `eslint.config.js`: `@eslint/js` recommended + `typescript-eslint
 - Comments and identifier strings in this repo are often Spanish; preserve the surrounding language when editing.
 - Service files export both a singleton (`export const x = new XServices()`) and a default export — keep both.
 - `core/shared/types/*.d.ts` use `declare`/ambient style declarations consumed across layers; put cross-layer shared types there rather than co-locating them with features.
+- There is one shared form component: `presentation/components/ui/Forms/Form.tsx` (`type='dialog'` renders inside a PrimeReact `Dialog`, `type='normal'` inline). `FormHere.tsx` was removed — do not recreate a second form component.
+- No `console.log` in committed code; leave `TODO:` comments for unimplemented behavior instead.

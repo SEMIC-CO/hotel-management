@@ -1,6 +1,6 @@
 import { Toast } from 'primereact/toast'
 import { useRef, useState } from 'react'
-import { useSessionStore } from '../../infrastructure/stores/session.store'
+import { useUser } from './useUser'
 
 export const useList = <T>() => {
   const [selectedRow, setSelectedRow] = useState<any>()
@@ -9,7 +9,7 @@ export const useList = <T>() => {
   const [showForm, setShowForm] = useState<boolean>(false)
   const [action, setAction] = useState<'add' | 'edit'>('add')
   const toast = useRef<Toast>(null)
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   return {
     selectedRow,

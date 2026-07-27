@@ -7,9 +7,10 @@ import type {
   ISearch,
   IShow
 } from '../../../../core/shared/types/forms'
+import type { IBookings } from '../../../../core/shared/types/data'
 import dayjs from 'dayjs'
 import {useBookingStore} from '../../../../infrastructure/stores/booking.store'
-import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import {useUser} from '../../../hooks/useUser'
 import {AddRoomReservations, type IGuestsRooms, type IReservation, type IRoomAvailability} from '../AddRoomReservations'
 import {useToast} from '../../../hooks/useToast'
 import {useContainer} from '../../../hooks/useContainer'
@@ -30,7 +31,7 @@ export const useBookingForm = ({
   const valueState = useBookingStore((state) => state.values)
   const updateState = useBookingStore((state) => state.updateState)
   const resetState = useBookingStore((state) => state.resetState)
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   const [roomTypes, setRoomTypes] = useState<IOptionsSelect[]>([])
   const [roomsAll, setRoomsAll] = useState<IOptionsSelect[]>([])
@@ -245,8 +246,8 @@ export const useBookingForm = ({
   }
 
   const handleSave = useCallback(
-    ({ values, setLoading }: IPropsSave) => {
-      values.customer_id = valueState.customer_id
+    ({ values, setLoading }: IPropsSave<IBookings & { rooms_reservations: any[] }>) => {
+      const data = { ...values, customer_id: valueState.customer_id }
       if (!validateRooms(values.rooms_reservations)) {
         return
       }
@@ -257,7 +258,7 @@ export const useBookingForm = ({
         return
       }
       setLoading(true)
-      bookingRepository.save(values).then((resp) => {
+      bookingRepository.save(data).then((resp) => {
         setLoading(false)
         if (typeof resp === 'undefined') return
         if (resp.ok) {

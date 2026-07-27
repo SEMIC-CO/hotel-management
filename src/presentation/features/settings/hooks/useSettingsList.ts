@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { useList } from '../../../hooks/useList'
-import { useSessionStore } from '../../../../infrastructure/stores/session.store'
+import { useUser } from '../../../hooks/useUser'
 import { createParamsUrl } from '../../../../core/shared/utils/utils'
 
 interface UseSettingsListOptions {
@@ -14,7 +14,7 @@ export const useSettingsList = (
   options: UseSettingsListOptions
 ) => {
   const { getFn, deleteFn, keyField = 'key' } = options
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
   const {
     selectedRow,
     setSelectedRow,

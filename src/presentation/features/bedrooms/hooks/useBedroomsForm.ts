@@ -2,11 +2,12 @@ import {useCallback, useEffect, useRef, useState} from 'react'
 import * as Yup from 'yup'
 import {Toast} from 'primereact/toast'
 import type { IField, IOptionsSelect, IPropsSave, IShow } from '../../../../core/shared/types/forms'
+import type { IBedrooms } from '../../../../core/shared/types/data'
 import {useContainer} from '../../../hooks/useContainer'
 import {useBedroomsStore} from '../../../../infrastructure/stores/bedrooms.store'
 import {ROOM_STATES} from '../../../../core/shared/utils/constants'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
-import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import {useUser} from '../../../hooks/useUser'
 
 export const useBedroomsForm = ({
   onActionForm,
@@ -15,7 +16,7 @@ export const useBedroomsForm = ({
   const toast = useRef<Toast>(null)
   const { bedroomRepository, settingsRepository } = useContainer()
   const { resetState } = useBedroomsStore()
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   const [roomTypes, setRoomTypes] = useState<IOptionsSelect[]>([])
 
@@ -33,7 +34,7 @@ export const useBedroomsForm = ({
   }, [user.center_id, user.company_id, settingsRepository])
 
   const handleSave = useCallback(
-    ({ values, setLoading }: IPropsSave) => {
+    ({ values, setLoading }: IPropsSave<IBedrooms>) => {
       let typeToast: 'success' | 'info' | 'warn' | 'error' | undefined = 'error'
       setLoading(true)
       bedroomRepository.save(values).then((resp) => {

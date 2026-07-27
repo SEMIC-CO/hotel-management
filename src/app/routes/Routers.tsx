@@ -19,7 +19,6 @@ export const Routers = () => {
         resp.isAuthenticated ? updateState(resp) : resetState()
       } else {
         authRepository.refreshToken().then((resp: boolean | ISession) => {
-          console.log(resp)
           if (typeof resp !== 'boolean') {
             resp.isAuthenticated ? updateState(resp) : resetState()
           } else {

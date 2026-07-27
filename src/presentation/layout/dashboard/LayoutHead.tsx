@@ -5,30 +5,30 @@ import { useRef } from 'react'
 import { Menu } from 'primereact/menu'
 import { useNavigate } from 'react-router-dom'
 import { useSessionStore } from '../../../infrastructure/stores/session.store'
+import { useUser } from '../../hooks/useUser'
 import { ThemeToggle } from '../../providers/ThemeToggle'
 import { useContainer } from '../../hooks/useContainer'
+import { APP_ROUTES } from '../../../core/shared/utils/constants'
 
 export const LayoutHead = () => {
   const navigate = useNavigate()
-  const { resetState, values } = useSessionStore()
+  const { resetState } = useSessionStore()
   const { authRepository } = useContainer()
-  const user = values.user
+  const user = useUser()
 
   const handleLogout = () => {
     authRepository
       .authLogout()
       .then((resp) => {
-        console.log(resp)
         if (resp.isAuthenticated) {
           resetState()
-          navigate('/web/login')
+          navigate(APP_ROUTES.LOGIN)
         }
       })
       .catch((error) => {
         console.error('Error during logout:', error)
       })
   }
-  console.log(user)
 
   const start = (
     <div className='flex'>

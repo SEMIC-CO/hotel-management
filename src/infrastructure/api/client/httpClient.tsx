@@ -6,7 +6,6 @@ export const useFetch = (
   method: string
 ) => {
   const url = `${urlApi}/${endpoint}`
-  console.log(url)
 
   if (method === 'GET') {
     const resp = fetch(url, {

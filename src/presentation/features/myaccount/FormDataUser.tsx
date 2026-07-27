@@ -1,18 +1,12 @@
 import {Card} from 'primereact/card'
-import {FormHere} from '../../components/ui/Forms/FormHere'
+import {Form} from '../../components/ui/Forms/Form'
 import type { IField } from '../../../core/shared/types/forms'
-import {useSessionStore} from '../../../infrastructure/stores/session.store'
 import * as Yup from 'yup'
 import {useUsersStore} from '../../../infrastructure/stores/user.store'
 
 export const FormDataUser = () => {
-  const session = useSessionStore((state) => state.values)
-  const { user } = session
-  console.log('MyAccount', user)
-
   const handleSave = () => {
-    console.log('handleSave')
-    // Simulate API call
+    // TODO: implementar actualización de datos de usuario
   }
 
   const fields: IField[] = [
@@ -50,7 +44,8 @@ export const FormDataUser = () => {
       <Card>
         <h2 className='font-bold text-lg'>Datos de usuario</h2>
         <p>Información de la cuenta del usuario.</p>
-        <FormHere
+        <Form
+          type='normal'
           handleSave={handleSave}
           fields={fields}
           validationSchema={validationSchema}

@@ -56,8 +56,7 @@ export const FormDataBusiness = React.forwardRef<
         }}
         validationSchema={schema}
         onSubmit={(values) => {
-          valuesState.company = values
-          updateState(valuesState)
+          updateState({ company: values })
           stepperRef.current?.nextCallback()
         }}
         innerRef={ref}

@@ -4,12 +4,18 @@ import type { IRoomsBookings } from '../../core/shared/types/data'
 
 const valuesBookings = {
   booking_id: 0,
+  customer_id: 0,
+  customer_name: '',
+  invoice_holder: 0,
   document_type: '',
   no_document: '',
   names: '',
   surnames: '',
+  birthdate: '',
   cell_phone: '',
+  cell_phone_emergency: '',
   email: '',
+  type: '',
   entry_date: '',
   exit_date: '',
   total_days: 0,
@@ -23,8 +29,10 @@ const valuesBookings = {
   bank: ''
 }
 
-export const useBookingStore = create<IStore>()((set) => ({
+export type BookingFormValues = typeof valuesBookings
+
+export const useBookingStore = create<IStore<BookingFormValues>>()((set) => ({
   values: valuesBookings,
   updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
-  resetState: (newValues) => set({ values: newValues || valuesBookings })
+  resetState: (newValues) => set({ values: (newValues as BookingFormValues) || valuesBookings })
 }))

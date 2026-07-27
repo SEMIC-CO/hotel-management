@@ -34,9 +34,6 @@ class BookingsServices implements IBookingRepository {
   getDataEditBookings = async <T>(params = '') => {
     const resp = await useFetch(`reservations/edit_booking${params}`, [], 'GET')
     await validateSession(resp)
-    if (resp.status === 401) {
-      console.log('Cerrar sesion')
-    }
     const body: BodyRoom<T> = (await resp.json()) as BodyRoom<T>
     if (resp.ok) {
       return body.data
@@ -47,9 +44,6 @@ class BookingsServices implements IBookingRepository {
   getCalendarReservations = async (params = '') => {
     const resp = await useFetch(`reservations/calendar${params}`, [], 'GET')
     await validateSession(resp)
-    if (resp.status === 401) {
-      console.log('Cerrar sesion')
-    }
     const body: BodyRoom<any> = (await resp.json()) as BodyRoom<any>
     if (resp.ok) {
       return body.data

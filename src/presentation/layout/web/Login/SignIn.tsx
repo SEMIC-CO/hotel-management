@@ -33,15 +33,14 @@ export const SignIn = () => {
     }
   })
 
-  // console.log(valuesState)
   const { handleChange, handleSubmit, values } = formik
   const { username, password } = values
 
-  const onSuccess = (res: any) => {
-    console.log(res)
+  const onSuccess = () => {
+    // TODO: implementar login con Google
   }
   const onError = () => {
-    console.log('prueba')
+    showMessage()
   }
   const showMessage = () => {
     if (toastTopCenter?.current) {

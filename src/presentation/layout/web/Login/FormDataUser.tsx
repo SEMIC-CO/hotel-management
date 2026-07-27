@@ -30,8 +30,7 @@ export const FormDataUser = React.forwardRef<FormRef, IFormDataBusinessProps>(
           }}
           validationSchema={schema}
           onSubmit={(values) => {
-            valuesState.user = values
-            updateState(valuesState)
+            updateState({ user: { ...valuesState.user, ...values } })
             stepperRef.current.nextCallback()
           }}
           innerRef={ref}

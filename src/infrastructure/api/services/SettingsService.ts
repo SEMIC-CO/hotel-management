@@ -37,7 +37,6 @@ class SettingsService implements ISettingsRepository {
   }
 
   getCenters = async (params = '') => {
-    console.log(params)
     const resp = await useFetch(`centers${params}`, [], 'GET')
     await validateSession(resp)
     const body = (await resp.json()) as Options | BodyCenters

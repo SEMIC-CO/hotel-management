@@ -61,7 +61,8 @@ export const useInvoicesList = () => {
       selectedRow?.status == 'PENDIENTE' && {
         label: 'Transmitir factura',
         icon: 'pi pi-fw pi-plus',
-        command: () => console.log('Agregar anticipo')
+        // TODO: integrar transmisión de factura
+        command: () => undefined
       }
     ].filter(Boolean)
   }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createParamsUrl } from '../../core/shared/utils/utils'
-import { useSessionStore } from '../../infrastructure/stores/session.store'
+import { useUser } from './useUser'
 import { useContainer } from './useContainer'
 
 let param = ''
@@ -13,8 +13,6 @@ export const useCities = <T>(type = '') => {
   const [cities, setCities] = useState<T[]>([])
   useEffect(() => {
     settingsRepository.getCities(param).then((resp) => {
-      console.log(resp)
-
       if (typeof resp !== 'undefined') {
         setCities(resp as T[])
       }
@@ -65,13 +63,12 @@ export const useBanks = <T>(type = '') => {
 export const useCenters = <T>(type = '') => {
   const { settingsRepository } = useContainer()
   const [centers, setCenters] = useState<T[]>([])
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
   useEffect(() => {
     param = createParamsUrl({ company_id: user.company_id })
     if (type === 'select') {
       param += '&select=true'
     }
-    console.log(param)
     settingsRepository.getCenters(param).then((resp) => {
       if (typeof resp !== 'undefined') {
         setCenters(resp as T[])

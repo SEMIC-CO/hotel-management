@@ -39,8 +39,6 @@ export const useBookingsList = () => {
     bookingRepository
       .get(urlParams)
       .then((resp) => {
-        console.log(resp);
-        
         setData(resp ?? [])
       })
       .finally(() => {
@@ -71,7 +69,6 @@ export const useBookingsList = () => {
 
   const onFormAdvance = useCallback(
     (row: IBookings) => {
-      console.log("onFormAdvance Bookings", row);
       setShowFormAdvance(true)
       updateStateAdvance({
         booking_id: row.booking_id,
@@ -83,7 +80,6 @@ export const useBookingsList = () => {
 
   const onFormOtherServices = useCallback(
     (row: IBookings) => {
-      console.log("onFormAdvance Bookings", row);
       setShowFormOthers(true)
       updateStateAdvance({
         booking_id: row.booking_id,

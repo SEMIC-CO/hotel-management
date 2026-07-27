@@ -58,25 +58,17 @@ export interface IBookings {
   val_room?: number
   total_days: number
   total_amount_pay: number
-  status: string,
-  total_reservation: number
-  total: number
-}
-export interface IEntries {
-  key?: number | string
-  entry_id: number
-  room_id: number | string
-  customer_id: number
-  customer: string
-  no_document: number
-  names?: string
-  entry_date: string
-  exit_date: string
-  val_day?: number
-  val_room?: number
-  total_days: number
-  total_amount_pay: number
   status: string
+  total_reservation: number | string
+  state?: string
+  total?: number
+  customer_name?: string
+  no_room?: string
+  total_others_services?: number
+  value_advance?: number
+  invoice_number?: string
+  type?: string
+  observations?: string
 }
 export interface IUsers {
   key?: number
@@ -116,6 +108,7 @@ export interface ICompanyRegister {
   nit: string
   email: string
   phone: string
+  country: string
   city: string
   address: string
 }

@@ -1,5 +1,5 @@
 import type { IInvoiceRepository } from "../../../core/domain/repositories"
-import type { IEntries, IInvoices } from "../../../core/shared/types/data"
+import type { IInvoices } from "../../../core/shared/types/data"
 import type { IRespSuccess } from "../../../core/shared/types/forms"
 import {useFetch} from "../client/httpClient"
 import {validateSession} from "../../auth/sessionManager"
@@ -9,7 +9,7 @@ interface Body {
 }
 
 class InvoicesServices implements IInvoiceRepository {
-    save = async (data: IEntries) => {
+    save = async (data: IInvoices) => {
         let service = 'invoice'
         let method = 'POST'
         if (typeof data.key !== 'undefined') {

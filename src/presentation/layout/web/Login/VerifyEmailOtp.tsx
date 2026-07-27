@@ -17,9 +17,7 @@ export const VerifyEmailOtp: React.FC<Props> = ({ setDisabled }) => {
   const { user } = valuesState
 
   const handleSendCode = () => {
-    if (user.email !== '') {
-      console.log('preuba')
-    } else {
+    if (user.email === '') {
       toast.current?.show({
         severity: 'error',
         summary: 'Error',
@@ -28,13 +26,13 @@ export const VerifyEmailOtp: React.FC<Props> = ({ setDisabled }) => {
         life: 3000
       })
     }
+    // TODO: integrar envío de código de verificación al email
   }
   const onChange = (value: number) => {
     setTokens(value)
     if (value.toString().length > 3) {
       setDisabled(false)
     }
-    // console.log(value.toString().length)
   }
   return (
     <section>

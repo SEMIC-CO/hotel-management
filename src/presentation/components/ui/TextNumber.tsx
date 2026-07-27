@@ -1,10 +1,8 @@
 import {
   InputNumber,
-  // InputNumberValueChangeEvent
 } from "primereact/inputnumber";
 import { ErrorMessage, useField, useFormikContext } from "formik";
 import { isInvalid } from "../../../core/shared/utils/utils";
-import { useEffect } from "react";
 
 interface Props {
   label: string;
@@ -17,21 +15,8 @@ interface Props {
 
 export const TextNumber = ({ label, type, onBlur, ...props }: Props) => {
   const [{ onChange, ...field }, meta, helpers] = useField({ ...props });
-  // const { value, error } = meta
   const { setValue } = helpers;
   const form = useFormikContext();
-
-  // console.log(field)
-  // console.log(meta)
-  // console.log("TextNumber props", props);
-
-  useEffect(() => {
-    if (typeof props.value !== "undefined") {
-      setValue(props.value);
-    } else if (typeof meta.initialValue !== "undefined") {
-      setValue(meta.initialValue);
-    }
-  }, [props.value, meta.initialValue]);
 
   const desformatValue = (value: any) => {
     if (typeof value === "number") {

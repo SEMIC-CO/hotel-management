@@ -9,6 +9,7 @@ import {Tag} from 'primereact/tag'
 import {OverlayPanel} from 'primereact/overlaypanel'
 import {List} from './List'
 import {STATUS_COLORS} from '../../../../core/shared/utils/constants'
+import {formatCurrency} from '../../../../core/shared/utils/utils'
 
 export const DataList = ({
   setShowForm,
@@ -31,26 +32,22 @@ export const DataList = ({
 
   useEffect(() => {
     if (data.length > 0) {
+      const fields: any[] = []
+      const filters: DataTableFilterMeta = { ...defaultFilters }
       for (const index in data[0]) {
-        filtersList.push(index)
-        defaultFilters[index] = {
+        fields.push(index)
+        filters[index] = {
           operator: FilterOperator.AND,
           constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }]
         }
       }
-      setFiltersList(filtersList)
-      setFilters(defaultFilters)
+      setFiltersList(fields)
+      setFilters(filters)
     }
   }, [data])
 
   const [filters, setFilters] = useState<DataTableFilterMeta>(defaultFilters)
   const cm = useRef<ContextMenu>(null)
-
-  const formatCurrency = (value: number) => {
-    if (value === null) value = 0
-    value = Number(value)
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-  }
 
   const [overlayData, setOverlayData] = useState<any[]>([])
   const [overlayString, setOverlayString] = useState<string>('')
@@ -178,8 +175,7 @@ export const DataList = ({
     }
 
     if (typeof rowData[field] === 'object' && rowData[field] !== null) {
-      console.warn(`Campo "${field}" es un objeto:`, rowData[field])
-      return JSON.stringify(rowData[field]) // o return '' si no quieres mostrarlo
+      return JSON.stringify(rowData[field])
     }
 
     return rowData[field]

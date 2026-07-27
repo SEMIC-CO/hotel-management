@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { IBedrooms, IBookings, ICustomers, IEntries, ISession, IUsers } from './data'
+import { IBookings, IConstants } from './data'
 import { StepperRefAttributes } from 'primereact/stepper'
 
 export type ValueField = string | number | undefined
@@ -100,16 +100,14 @@ export interface IRespSuccess {
   message?: string
 }
 
-export interface IStore {
-  values: IEntries | ICustomers | IBedrooms | ISession | Register | IBookings | IBanksAccount | IProfiles | ICenters | IRoomType | IUsers
-  updateState: (
-    values: IEntries | ICustomers | IBedrooms | ISession | Register | IBookings | IBanksAccount | IProfiles | ICenters | IRoomType | IUsers
-  ) => void
-  resetState: (values?: IEntries | ICustomers | IBedrooms | ISession | Register | IBookings | IBanksAccount | IProfiles | ICenters | IRoomType | IUsers) => void
+export interface IStore<T extends Record<string, any> = Record<string, any>> {
+  values: T
+  updateState: (values: Partial<T> | Record<string, any>) => void
+  resetState: (values?: T) => void
 }
 
-interface IPropsSave {
-  values: (IEntries | ICustomers | IBedrooms | IBookings | IBanksAccount | IProfiles | ICenters | IRoomType | IUsers) & IConstants
+interface IPropsSave<T = Record<string, any>> {
+  values: T & IConstants
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 

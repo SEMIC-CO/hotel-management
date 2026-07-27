@@ -3,7 +3,6 @@ import type {
   IBedroomRepository,
   IBookingRepository,
   ICustomerRepository,
-  IEntryRepository,
   IInvoiceRepository,
   ISettingsRepository
 } from '../domain/repositories'
@@ -13,7 +12,6 @@ export interface AppContainer {
   bookingRepository: IBookingRepository
   bedroomRepository: IBedroomRepository
   customerRepository: ICustomerRepository
-  entryRepository: IEntryRepository
   invoiceRepository: IInvoiceRepository
   settingsRepository: ISettingsRepository
 }

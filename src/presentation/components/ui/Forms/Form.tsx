@@ -12,7 +12,7 @@ import type { FormProps, IField, IStore } from '../../../../core/shared/types/fo
 import {TextArea} from '../TextArea'
 import {SearchField} from '../SearchField'
 import {OptionButton} from '../OptionButton'
-import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import {useUser} from '../../../hooks/useUser'
 import { normalizeInitialValues } from '../../../../core/shared/utils/form'
 
 export interface IHandleSaveForm {
@@ -56,7 +56,7 @@ export const Form = ({
     </div>
   )
 
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   const FooterContent = () => {
     return footer ? (
@@ -167,19 +167,19 @@ export const Form = ({
     }
   }
 
-  console.log("valuesForm", normalizeInitialValues(fields ?? [], valuesForm as Record<string, unknown>))
-
   const getFormik = () => {
     return (
       <Formik
         initialValues={normalizeInitialValues(fields ?? [], valuesForm as Record<string, unknown>)}
-        // initialValues={valuesForm}
         enableReinitialize
         onSubmit={(values, form) => {
-          values.center_id = user.center_id
-          values.created_by = user.user_id
-          values.company_id = user.company_id
-          handleSave({ values, setLoading }, form)
+          const valuesWithSession = {
+            ...values,
+            center_id: user.center_id,
+            created_by: user.user_id,
+            company_id: user.company_id
+          }
+          handleSave({ values: valuesWithSession, setLoading }, form)
         }}
         validationSchema={validationSchema}
       >

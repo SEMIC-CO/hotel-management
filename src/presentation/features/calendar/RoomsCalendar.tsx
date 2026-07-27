@@ -9,7 +9,7 @@ import {Dialog} from 'primereact/dialog'
 import {ProgressBar} from 'primereact/progressbar'
 
 import {useContainer} from '../../hooks/useContainer'
-import {useSessionStore} from '../../../infrastructure/stores/session.store'
+import {useUser} from '../../hooks/useUser'
 import {createParamsUrl} from '../../../core/shared/utils/utils'
 import type { IBedrooms } from '../../../core/shared/types/data'
 
@@ -48,7 +48,7 @@ const buildDayRange = (start: Dayjs, days: number): Dayjs[] =>
 export const RoomsCalendar = () => {
   const toast = useRef<Toast>(null)
   const { bedroomRepository, bookingRepository } = useContainer()
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   /* Data */
   const [rooms, setRooms] = useState<RoomRow[]>([])
@@ -104,15 +104,12 @@ export const RoomsCalendar = () => {
       start: toDateStr(startDate),
       end: toDateStr(addDays(startDate, VISIBLE_DAYS))
     })
-    console.log(params);
-    
+
     try {
       const [roomsData, bookingsData] = await Promise.all([
         bedroomRepository.get<IBedrooms[]>(params),
         bookingRepository.getCalendarReservations(params),
       ])
-      
-      console.log("bookingsData", bookingsData);
 
       setRooms(
         (roomsData ?? []).map((r: IBedrooms) => ({

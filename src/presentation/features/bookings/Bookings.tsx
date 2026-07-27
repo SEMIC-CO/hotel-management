@@ -5,6 +5,7 @@ import { FormInvoice } from './FormInvoice'
 import { FormAdvances } from './FormAdvances'
 import { useBookingsList } from './hooks/useBookingsList'
 import { FormOtherServices } from './FormOtherServices'
+import { BOOKING_STATE } from '../../../core/shared/utils/constants'
 
 export const Bookings = () => {
   const list = useBookingsList()
@@ -13,14 +14,14 @@ export const Bookings = () => {
     selectedRow: list.selectedRow,
     setSelectedRow: list.setSelectedRow,
     menu: [
-      (list.selectedRow?.state == 'PENDIENTE CONFIRMAR' ||
-        list.selectedRow?.state == 'RESERVADA' ||
-        list.selectedRow?.state == 'INGRESO') && {
+      (list.selectedRow?.state == BOOKING_STATE.PENDIENTE_CONFIRMAR ||
+        list.selectedRow?.state == BOOKING_STATE.RESERVADA ||
+        list.selectedRow?.state == BOOKING_STATE.INGRESO) && {
         label: 'Editar',
         icon: 'pi pi-fw pi-pencil',
         command: () => list.update(list.selectedRow)
       },
-      list.selectedRow?.state == 'INGRESO' && 
+      list.selectedRow?.state == BOOKING_STATE.INGRESO &&
       {
         label: 'Facturar estadía',
         icon: 'pi pi-fw pi-print',
@@ -31,18 +32,18 @@ export const Bookings = () => {
         icon: 'pi pi-fw pi-list',
         command: () => list.onFormOtherServices(list.selectedRow)
       },
-      list.selectedRow?.state == 'PENDIENTE CONFIRMAR' && {
+      list.selectedRow?.state == BOOKING_STATE.PENDIENTE_CONFIRMAR && {
         label: 'Confirmar reserva',
         icon: 'pi pi-fw pi-check',
         command: () => list.confirmReservation(list.selectedRow)
       },
-      list.selectedRow?.state !== 'CANCELADA' &&
-        list.selectedRow?.state !== 'INGRESO' && {
+      list.selectedRow?.state !== BOOKING_STATE.CANCELADA &&
+        list.selectedRow?.state !== BOOKING_STATE.INGRESO && {
           label: 'Cancelar',
           icon: 'pi pi-fw pi-times',
           command: () => list.cancelReservation(list.selectedRow)
         },
-      list.selectedRow?.state !== 'CANCELADA' && {
+      list.selectedRow?.state !== BOOKING_STATE.CANCELADA && {
         label: 'Agregar anticipo',
         icon: 'pi pi-fw pi-plus',
         command: () => list.onFormAdvance(list.selectedRow)

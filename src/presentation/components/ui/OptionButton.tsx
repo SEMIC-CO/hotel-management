@@ -6,11 +6,7 @@ import {RadioButton, type RadioButtonChangeEvent} from 'primereact/radiobutton'
 
 export const OptionButton = ({ label, ...props }: IField) => {
   const [selectedRadio, setSelectedRadio] = useState<number | string>('')
-  // const [field, meta, helpers] = useField<any>(props)
   const fieldFormik = useField<any>(props)
-  // console.log(field)
-  // console.log(meta)
-  // console.log(helpers)
   const meta = fieldFormik[1]
   const helpers = fieldFormik[2]
   const { setValue } = helpers
@@ -23,9 +19,7 @@ export const OptionButton = ({ label, ...props }: IField) => {
   }, [selectedRadio, props.value])
 
   const onChange = (e: RadioButtonChangeEvent) => {
-    console.log(e)
     setSelectedRadio(e.value)
-    // setValue(e.value)
     if (typeof props.onSelect !== 'undefined') {
       props.onSelect(e.value)
     }

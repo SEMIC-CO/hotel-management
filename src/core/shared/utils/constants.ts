@@ -27,6 +27,21 @@ export const RESERVATION_STATES = [
   { name: 'CANCELADA', code: 'CANCELADA' }
 ]
 
+/** Estados posibles de una reserva (columna `state` del backend). */
+export const BOOKING_STATE = {
+  PENDIENTE_CONFIRMAR: 'PENDIENTE CONFIRMAR',
+  RESERVADA: 'RESERVADA',
+  INGRESO: 'INGRESO',
+  CANCELADA: 'CANCELADA'
+} as const
+
+/** Rutas base de la aplicación. */
+export const APP_ROUTES = {
+  PUBLIC: '/web',
+  LOGIN: '/web/login',
+  PRIVATE: '/app'
+} as const
+
 export const VISIBLE_DAYS = 15
 
 export const DAY_NAMES = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB']

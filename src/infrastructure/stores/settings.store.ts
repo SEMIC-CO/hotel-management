@@ -6,9 +6,11 @@ const valuesProfiles = {
   type: ''
 }
 
-export const useProfilesStore = create<IStore>()((set) => ({
+export type ProfilesFormValues = typeof valuesProfiles
+
+export const useProfilesStore = create<IStore<ProfilesFormValues>>()((set) => ({
   values: valuesProfiles,
-  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesProfiles })
 }))
 
@@ -19,9 +21,11 @@ const valuesBanksAccounts = {
   bank_id: 0
 }
 
-export const useBanksAccountsStore = create<IStore>()((set) => ({
+export type BanksAccountsFormValues = typeof valuesBanksAccounts
+
+export const useBanksAccountsStore = create<IStore<BanksAccountsFormValues>>()((set) => ({
   values: valuesBanksAccounts,
-  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesBanksAccounts })
 }))
 
@@ -33,8 +37,11 @@ const valuesTypeRoom = {
   center_id: 0,
   created_by: 0
 }
-export const useTypeRoomStore = create<IStore>()((set) => ({
+
+export type TypeRoomFormValues = typeof valuesTypeRoom
+
+export const useTypeRoomStore = create<IStore<TypeRoomFormValues>>()((set) => ({
   values: valuesTypeRoom,
-  updateState: (newValues) => set({ values: { ...newValues, ...newValues } }),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesTypeRoom })
 }))

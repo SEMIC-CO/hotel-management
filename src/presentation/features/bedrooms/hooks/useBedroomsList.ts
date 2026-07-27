@@ -3,12 +3,12 @@ import {Toast} from 'primereact/toast'
 import {useContainer} from '../../../hooks/useContainer'
 import type { IBedrooms } from '../../../../core/shared/types/data'
 import {useBedroomsStore} from '../../../../infrastructure/stores/bedrooms.store'
-import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import {useUser} from '../../../hooks/useUser'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
 
 export const useBedroomsList = () => {
   const { bedroomRepository } = useContainer()
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
   const { updateState } = useBedroomsStore()
 
   const [showForm, setShowForm] = useState(false)

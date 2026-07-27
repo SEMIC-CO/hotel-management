@@ -8,34 +8,24 @@ export const isInvalid = (meta: any) => {
   return false
 }
 
-// export const createParamsUrl = (params: object) => {
-//   const urlParams = new URLSearchParams([
-//     ...Object.entries(params)
-//   ]).toString()
-//   return '?' + urlParams
-// }
-
-
-export const createParamsUrl = (params: object) => {
-  const urlParams = Object.entries(params)
-    .map(([key, value]) => `${key}=${value}`)
-    .join('&')
-  return '?' + urlParams
+export const createParamsUrl = (params: Record<string, string | number | boolean | undefined>) => {
+  const urlParams = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    if (typeof value !== 'undefined') {
+      urlParams.append(key, String(value))
+    }
+  })
+  const query = urlParams.toString()
+  return query ? '?' + query : ''
 }
 
 export const formatCurrency = (value: number) => {
-  return `$${Intl.NumberFormat().format(value)}`
-  // return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+  return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 }
 
 export const parseCurrency = (value: string): number => {
-  if (!value) return 0;
-
-  let cleanValue = value.replace(/[$\s]/g, '');
-  cleanValue = cleanValue.replace(/\./g, '');
-  cleanValue = cleanValue.replace(',', '');
-  
-  const result = parseFloat(cleanValue);
-
-  return isNaN(result) ? 0 : result;
-};
+  if (!value) return 0
+  const cleanValue = value.replace(/[$\s,]/g, '')
+  const result = parseFloat(cleanValue)
+  return isNaN(result) ? 0 : result
+}

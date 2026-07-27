@@ -15,7 +15,9 @@ const valuesUsers = {
   company_id: 0,
   center_id: 0
 }
-export const useUsersStore = create<IStore>()((set) => ({
+export type UsersFormValues = typeof valuesUsers
+
+export const useUsersStore = create<IStore<UsersFormValues>>()((set) => ({
   values: valuesUsers,
   updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesUsers })

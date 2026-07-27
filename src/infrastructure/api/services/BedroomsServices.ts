@@ -42,7 +42,6 @@ class BedroomsServices implements IBedroomRepository {
     const resp = await useFetch(service, { ...data }, method)
     await validateSession(resp)
     const body = (await resp.json()) as Body & IRespSuccess
-    console.log(body)
     if (resp.ok) {
       return body
     }

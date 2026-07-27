@@ -1,13 +1,11 @@
-# Arquitectura src-v1
+# Arquitectura src
 
-Esta carpeta contiene una reorganización del código fuente aplicando principios de **Arquitectura Limpia (Clean Architecture)** y **SOLID**.
-
-> Nota: se copió todo el contenido de `src/` original y se reorganizó sin modificar las funcionalidades existentes.
+Esta carpeta contiene el código fuente organizado aplicando principios de **Arquitectura Limpia (Clean Architecture)** y **SOLID**.
 
 ## Estructura de capas
 
 ```
-src-v1/
+src/
 ├── app/                    # Punto de entrada, rutas y providers
 ├── core/                   # Dominio y reglas de negocio
 │   ├── di/                 # Contratos de inyección de dependencias
@@ -63,11 +61,11 @@ export const MiComponente = () => {
 Para verificar que TypeScript compila correctamente:
 
 ```bash
-npx tsc -p tsconfig.v1.json --noEmit
+pnpm build    # corre `tsc -b` antes de `vite build`
 ```
 
 ## Próximos pasos recomendados
 
-1. Migrar `useContainer` a un React Context o Provider si se requiere inyección más flexible.
+1. Migrar `useContainer` a un React Context o Provider si se requiere inyección más flexible (p. ej. mocks en tests).
 2. Crear casos de uso en una capa `application/` para desacoplar aún más la lógica de negocio de los hooks.
-3. Añadir tests unitarios para los casos de uso y repositorios.
+3. Añadir tests unitarios para los casos de uso y repositorios (aún no hay framework de tests configurado).

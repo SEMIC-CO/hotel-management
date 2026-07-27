@@ -1,15 +1,12 @@
-import { use, useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import * as Yup from 'yup'
 import type {
   IField,
-  IOptionsSelect,
   IPropsSave,
   IShow
 } from '../../../../core/shared/types/forms'
 import { useToast } from '../../../hooks/useToast'
 import { useContainer } from '../../../hooks/useContainer'
-import { useSessionStore } from '../../../../infrastructure/stores/session.store'
-import { createParamsUrl, formatCurrency, parseCurrency } from '../../../../core/shared/utils/utils'
 import { useOtherServicesStore } from '../../../../infrastructure/stores/otherServices.store'
 
 export const useOtherServicesForm = ({
@@ -19,12 +16,9 @@ export const useOtherServicesForm = ({
   const { toast, showToast } = useToast()
 
   const { settingsRepository } = useContainer()
-  const [loading, setLoading] = useState(false)
-  const [services, setServices] = useState<IOptionsSelect[]>([])
+  const [loading] = useState(false)
 
-  const { resetState, updateState } = useOtherServicesStore()
-  const valuesState = useOtherServicesStore(state => state.values)
-  const { user } = useSessionStore((state) => state.values)
+  const { resetState } = useOtherServicesStore()
 
   // useEffect(() => {
   //   setLoading(true)
@@ -47,7 +41,8 @@ export const useOtherServicesForm = ({
 
   const handleSave = useCallback(
     ({ values, setLoading: _setLoading }: IPropsSave) => {
-      console.log("handleSave", values);
+      // TODO: integrar guardado de otros servicios
+      void values
 
       // setLoading(true)
       // bookings.saveAdvance(values).then(resp => {
@@ -74,16 +69,6 @@ export const useOtherServicesForm = ({
   // const onSetValueInit = (val: string) => {
   //   updateState({ payment_date: val })
   // }
-
-
-  const validationAmount = (e: any, form: any) => {
-    console.log("validationAmount", parseCurrency(e.target.value))
-    if (parseCurrency(e.target.value) > valuesState.total) {
-      form.setFieldValue('amount', 0)
-      showToast(`El valor del anticipo, no puede ser mayor al total de la reserva ${formatCurrency(valuesState.total)}`, 'error')
-    }
-  }
-
 
 
   const fields: IField[] = [

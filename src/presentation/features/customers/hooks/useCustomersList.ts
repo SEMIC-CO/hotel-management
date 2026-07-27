@@ -3,12 +3,12 @@ import {Toast} from 'primereact/toast'
 import {useContainer} from '../../../hooks/useContainer'
 import type { ICustomers } from '../../../../core/shared/types/data'
 import {useCustomersStore} from '../../../../infrastructure/stores/customers.store'
-import {useSessionStore} from '../../../../infrastructure/stores/session.store'
+import {useUser} from '../../../hooks/useUser'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
 
 export const useCustomersList = () => {
   const { customerRepository } = useContainer()
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
   const { updateState } = useCustomersStore()
 
   const [data, setData] = useState<ICustomers[]>([])

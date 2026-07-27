@@ -1,7 +1,7 @@
 import {create} from 'zustand'
 import type { IStore } from '../../core/shared/types/forms'
 
-const valuesEntries = {
+const valuesCustomers = {
   customer_id: 0,
   names: '',
   surnames: '',
@@ -14,8 +14,10 @@ const valuesEntries = {
   room: ''
 }
 
-export const useCustomersStore = create<IStore>()((set) => ({
-  values: valuesEntries,
+export type CustomersFormValues = typeof valuesCustomers
+
+export const useCustomersStore = create<IStore<CustomersFormValues>>()((set) => ({
+  values: valuesCustomers,
   updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
-  resetState: () => set({ values: valuesEntries })
+  resetState: () => set({ values: valuesCustomers })
 }))

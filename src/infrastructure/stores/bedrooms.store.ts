@@ -11,8 +11,10 @@ const valuesRooms = {
   state: '',
   type: ''
 }
-export const useBedroomsStore = create<IStore>()((set) => ({
+export type BedroomsFormValues = typeof valuesRooms
+
+export const useBedroomsStore = create<IStore<BedroomsFormValues>>()((set) => ({
   values: valuesRooms,
-  updateState: (newValues) => set(({ values: { ...newValues, ...newValues } })),
+  updateState: (newValues) => set((state) => ({ values: { ...state.values, ...newValues } })),
   resetState: () => set({ values: valuesRooms })
 }))

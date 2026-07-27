@@ -13,7 +13,7 @@ import {useToast} from '../../hooks/useToast'
 import {useContainer} from '../../hooks/useContainer'
 import {Button} from 'primereact/button'
 
-import {useSessionStore} from '../../../infrastructure/stores/session.store'
+import {useUser} from '../../hooks/useUser'
 import {createParamsUrl} from '../../../core/shared/utils/utils'
 import Loading from '../../components/ui/UX/Loading'
 import type { IColumns } from '../../../core/shared/types/datalist'
@@ -33,7 +33,6 @@ export const AddCustomersRooms = ({
   rooms,
   guestRoom,
   setData,
-  data,
   guestRoomsList
 }: AddCustomersRoomsProps) => {
   const { toast, showToast } = useToast()
@@ -44,7 +43,7 @@ export const AddCustomersRooms = ({
   const resetState = useCustomersStore((state) => state.resetState)
   const updateState = useCustomersStore((state) => state.updateState)
 
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
   const [loading, setLoading] = useState(false)
   const [roomText, setRoomText] = useState<string>('')
 
@@ -76,7 +75,6 @@ export const AddCustomersRooms = ({
     )
     setShowForm(false)
   }
-  console.log('AddCustomersRooms data', data)
 
   const addCustomer = (dataForm: any, form: FormikProps<any>) => {
     const roomSelected = dataForm.values.room

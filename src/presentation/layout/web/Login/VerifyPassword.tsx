@@ -3,7 +3,8 @@ import {Password} from 'primereact/password'
 import * as Yup from 'yup'
 import {useRegisterStore} from '../../../../infrastructure/stores/register.store'
 import React, { useRef } from 'react'
-import type { FormRef } from '../../../../core/shared/types/forms'
+import type { FormRef, IOptionsSelect } from '../../../../core/shared/types/forms'
+import type { IRegister } from '../../../../core/shared/types/data'
 import {useContainer} from '../../../hooks/useContainer'
 import {Toast} from 'primereact/toast'
 import {useNavigate} from 'react-router-dom'
@@ -46,14 +47,17 @@ export const VerifyPassword = React.forwardRef<FormRef>((_, ref) => {
       }}
       validationSchema={schema}
       onSubmit={(values) => {
-        valuesState.user.password = values.password
-        updateState(valuesState)
-        const data = structuredClone(valuesState)
-        console.log(data)
-        data.company.country = valuesState.company.country.code
-        data.company.city = valuesState.company.city.code
+        updateState({ user: { ...valuesState.user, password: values.password } })
+        const current = useRegisterStore.getState().values
+        const data: IRegister = {
+          user: { ...current.user, password: values.password },
+          company: {
+            ...current.company,
+            country: String((current.company.country as IOptionsSelect).code ?? ''),
+            city: String((current.company.city as IOptionsSelect).code ?? '')
+          }
+        }
         authRepository.registerCustomer(data).then((resp) => {
-          console.log(resp)
           if (typeof resp === 'object') {
             if (resp.ok) {
               resetState()

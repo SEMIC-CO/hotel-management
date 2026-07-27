@@ -1,6 +1,7 @@
 import {useCallback, useRef} from 'react'
 import {Toast} from 'primereact/toast'
 import type { IPropsSave, IShow } from '../../../../core/shared/types/forms'
+import type { ICustomers } from '../../../../core/shared/types/data'
 import {useContainer} from '../../../hooks/useContainer'
 import {useCustomersStore} from '../../../../infrastructure/stores/customers.store'
 import {buildCustomerFields, customerValidationSchema} from '../configCustomerFieldsMode'
@@ -14,7 +15,7 @@ export const useCustomersForm = ({
   const { resetState } = useCustomersStore()
 
   const handleSave = useCallback(
-    ({ values, setLoading }: IPropsSave) => {
+    ({ values, setLoading }: IPropsSave<ICustomers>) => {
       let typeToast: 'success' | 'info' | 'warn' | 'error' | undefined = 'error'
       setLoading(true)
       customerRepository.save(values).then((resp) => {

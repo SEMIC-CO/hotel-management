@@ -10,7 +10,6 @@ interface LayoutSidebarProps {
 export function LayoutSidebar({ setTitle }: LayoutSidebarProps) {
   const toast = useRef<Toast>(null)
   const navigate = useNavigate()
-  console.log(location.pathname)
 
   const items = [
     {

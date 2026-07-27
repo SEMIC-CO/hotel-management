@@ -6,12 +6,12 @@ import type {
   IPropsSave,
   IShow
 } from '../../../../core/shared/types/forms'
+import type { IBookings } from '../../../../core/shared/types/data'
 import { useToast } from '../../../hooks/useToast'
 import { useContainer } from '../../../hooks/useContainer'
-import { useSessionStore } from '../../../../infrastructure/stores/session.store'
+import { useUser } from '../../../hooks/useUser'
 import { createParamsUrl, formatCurrency, parseCurrency } from '../../../../core/shared/utils/utils'
 import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
-import bookings from '../../../../infrastructure/api/services/BookingsServices'
 
 export const useAdvanceForm = ({
   onActionForm,
@@ -19,14 +19,14 @@ export const useAdvanceForm = ({
 }: Omit<IShow, 'showForm'>) => {
   const { toast, showToast } = useToast()
 
-  const { settingsRepository } = useContainer()
+  const { settingsRepository, bookingRepository } = useContainer()
   const [loading, setLoading] = useState(false)
   const [accounts, setAccount] = useState<IOptionsSelect[]>([])
   const [disabled, setDisabled] = useState<boolean>(true)
 
   const { resetState, updateState } = useAdvancesStore()
   const valuesState = useAdvancesStore(state => state.values)
-  const { user } = useSessionStore((state) => state.values)
+  const user = useUser()
 
   useEffect(() => {
     setLoading(true)
@@ -45,12 +45,9 @@ export const useAdvanceForm = ({
   }, [user.company_id, user.center_id, settingsRepository])
 
   const handleSave = useCallback(
-    ({ values, setLoading: _setLoading }: IPropsSave) => {
-      console.log("handleSave", values);
-
+    ({ values, setLoading: _setLoading }: IPropsSave<IBookings>) => {
       setLoading(true)
-      bookings.saveAdvance(values).then(resp => {
-        console.log("saveAdvance", resp);
+      bookingRepository.saveAdvance(values).then(resp => {
         if (typeof resp === 'undefined') return
         if (resp.ok) {
           resetState()
@@ -67,7 +64,7 @@ export const useAdvanceForm = ({
         setLoading(false)
       })
     },
-    [settingsRepository, onActionForm, setShowForm, resetState, showToast]
+    [bookingRepository, onActionForm, setShowForm, resetState, showToast]
   )
 
   // const onSetValueInit = (val: string) => {
@@ -85,7 +82,6 @@ export const useAdvanceForm = ({
   }
 
   const validationAmount = (e: any, form: any) => {
-    console.log("validationAmount", parseCurrency(e.target.value))
     if (parseCurrency(e.target.value) > valuesState.total) {
       form.setFieldValue('amount', 0)
       showToast(`El valor del anticipo, no puede ser mayor al total de la reserva ${formatCurrency(valuesState.total)}`, 'error')
@@ -136,9 +132,6 @@ export const useAdvanceForm = ({
       type: 'textArea'
     }
   ]
-
-  console.log("valuesState Advance", valuesState);
-
 
   const validationSchema = Yup.object({
     payment_date: Yup.string().required('Requerido'),

@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { Bookings } from '../../features/bookings/Bookings'
 import { Bedrooms } from '../../features/bedrooms/Bedrooms'
 import { Customers } from '../../features/customers/Customers'
-import { Entries } from '../../features/entries/Entries'
 import { Centers } from '../../features/settings/Centers/Centers'
 import { Users } from '../../features/settings/Users/Users'
 import { TypeRoom } from '../../features/settings/TypeRoom/TypeRoom'
@@ -16,7 +15,6 @@ import { Invoices } from '../../features/invoices/Invoices'
 import { Sequences } from '../../features/settings/Sequences/Sequences'
 
 export const LayoutContent = () => {
-  console.log('prueba')
   return (
     <>
       <Routes>
@@ -68,10 +66,6 @@ export const LayoutContent = () => {
         <Route
           path='/bedrooms'
           element={<Bedrooms />}
-        />
-        <Route
-          path='/entries'
-          element={<Entries />}
         />
         <Route
           path='/bookings'

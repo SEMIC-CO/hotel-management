@@ -1,15 +1,11 @@
 import { Avatar } from 'primereact/avatar'
 import { Card } from 'primereact/card'
-import { useSessionStore } from '../../../infrastructure/stores/session.store'
-// import { IField } from '../../../types/forms'
-// import * as Yup from 'yup'
+import { useUser } from '../../hooks/useUser'
 import { FormDataUser } from './FormDataUser'
 import { FormUpdatePassword } from './FormUpdatePassword'
 
 export const MyAccount = () => {
-  const session = useSessionStore((state) => state.values)
-  const { user } = session
-  console.log('MyAccount', user)
+  const user = useUser()
 
   // const handleSave = () => {
   //   console.log('handleSave')

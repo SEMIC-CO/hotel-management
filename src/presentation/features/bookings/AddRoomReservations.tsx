@@ -272,6 +272,8 @@ export const AddRoomReservations = ({
       ].filter(Boolean) as IField[],
     [roomTypes, rooms, onChangeTypeRoom, onChangeRoom]
   )
+  console.log("valuesState.type", valuesState.type);
+  
 
   return (
     <div className='block w-full'>

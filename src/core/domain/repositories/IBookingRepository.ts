@@ -7,6 +7,7 @@ export interface IBookingRepository {
   getDataEditBookings: <T>(params?: string) => Promise<T | undefined>
   getCalendarReservations: (params?: string) => Promise<any | undefined>
   save: (data: IBookings) => Promise<(Body & IRespSuccess) | undefined>
+  saveAdvance: (data: IBookings) => Promise<(Body & IRespSuccess) | undefined>
   confirmReservation: (booking_id: number) => Promise<IRespSuccess | undefined>
   cancelReservation: (booking_id: number) => Promise<IRespSuccess | undefined>
 }
