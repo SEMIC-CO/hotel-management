@@ -21,7 +21,7 @@ export const SelectField = ({ label, ...props }: IField) => {
       typeof props.onChangeFunc !== 'undefined' &&
       typeof selectOption !== 'undefined'
     ) {
-      props.onChangeFunc({ value: selectOption })
+      props.onChangeFunc({ value: selectOption }, form)
     }
   }, [field.value])
 

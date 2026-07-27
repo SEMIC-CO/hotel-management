@@ -18,6 +18,26 @@ import {ACTION_TYPE, DOCUMENT_TYPES} from '../../../../core/shared/utils/constan
 import {createParamsUrl, formatCurrency} from '../../../../core/shared/utils/utils'
 import {Button} from 'primereact/button'
 
+interface IEntryExitDates {
+  entry_date: string
+  exit_date: string
+}
+
+// Calcula total_dias y total_reservation directamente en Formik.
+// formik.values puede no tener aun la fecha que se acaba de cambiar,
+// por eso las fechas se reciben como argumentos.
+const setTotalsByDates = (formik: any, entryDate: string, exitDate: string) => {
+  if (entryDate === '' || exitDate === '') {
+    formik.setFieldValue('total_days', 0)
+    formik.setFieldValue('total_reservation', 0)
+    return
+  }
+  let days = dayjs(exitDate).diff(dayjs(entryDate), 'days')
+  days = days === 0 ? 1 : days
+  formik.setFieldValue('total_days', days)
+  formik.setFieldValue('total_reservation', days * (formik.values.total_rooms ?? 0))
+}
+
 export const useBookingForm = ({
   onActionForm,
   setShowForm,
@@ -28,8 +48,10 @@ export const useBookingForm = ({
   const { bookingRepository, customerRepository } = useContainer()
   const [loading, setLoading] = useState(false)
 
-  const valueState = useBookingStore((state) => state.values)
-  const updateState = useBookingStore((state) => state.updateState)
+  // El store solo se usa para la carga inicial del editar (booking_id)
+  // y para resetear al guardar/cerrar. Durante la edicion Formik es el
+  // dueno de los valores, asi ningun update reinicia el formulario.
+  const booking_id = useBookingStore((state) => state.values.booking_id)
   const resetState = useBookingStore((state) => state.resetState)
   const user = useUser()
 
@@ -46,18 +68,52 @@ export const useBookingForm = ({
 
   const addRoomRowRef = useRef<(() => void) | null>(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (action !== 'edit') {
-        setDataList([])
-        setRoomsAll([])
-        setGuestRoomList([])
+  const getRoomsAvailable = useCallback(
+    async (dates?: IEntryExitDates): Promise<IRoomAvailability | undefined> => {
+      // Sin fechas explicitas se toman del store (carga inicial del editar)
+      const { entry_date, exit_date } = dates ?? useBookingStore.getState().values
+      if (entry_date === '' || exit_date === '' || exit_date < entry_date) {
         return
       }
-      await fetchDataEdit()
-    }
-    fetchData()
-  }, [action, valueState.booking_id])
+      setLoading(true)
+      try {
+        const params = createParamsUrl({
+          company_id: user.company_id,
+          center_id: user.center_id,
+          entry_date,
+          exit_date
+        })
+
+        const resp = await bookingRepository.getRoomAvailability<IRoomAvailability>(params)
+
+        if (resp) {
+          setRoomTypes(resp.type_room ?? [])
+          setRoomsAll(resp.rooms ?? [])
+        }
+
+        return resp
+      } finally {
+        setLoading(false)
+      }
+    },
+    [bookingRepository, user.company_id, user.center_id]
+  )
+
+  // Al ocultarse el calendario se consulta disponibilidad. Se usa el valor
+  // recibido para la fecha del campo y formik.values para la otra fecha.
+  const onCommitEntry = useCallback(
+    (val: string, formik: any) => {
+      getRoomsAvailable({ ...formik.values, entry_date: val })
+    },
+    [getRoomsAvailable]
+  )
+
+  const onCommitExit = useCallback(
+    (val: string, formik: any) => {
+      getRoomsAvailable({ ...formik.values, exit_date: val })
+    },
+    [getRoomsAvailable]
+  )
 
   const assingRooms = async (rooms: any[]) => {
     const roomEdit = rooms.map((room: any) => ({
@@ -77,7 +133,7 @@ export const useBookingForm = ({
     let availableRooms = availability?.rooms ?? []
 
     const respListRooms = await bookingRepository.getDataEditBookings<any>(
-      `?booking_id=${valueState.booking_id}`
+      `?booking_id=${booking_id}`
     )
 
     if (typeof respListRooms !== 'undefined') {
@@ -130,19 +186,17 @@ export const useBookingForm = ({
   }
 
   useEffect(() => {
-    if (valueState.entry_date === '' || valueState.exit_date === '') {
-      updateState({ total_days: 0, total_reservation: 0 })
-      return
+    const fetchData = async () => {
+      if (action !== 'edit') {
+        setDataList([])
+        setRoomsAll([])
+        setGuestRoomList([])
+        return
+      }
+      await fetchDataEdit()
     }
-    const dateInit = dayjs(valueState.entry_date)
-    const dateEnd = dayjs(valueState.exit_date)
-    let days = dateEnd.diff(dateInit, 'days')
-    days = days === 0 ? 1 : days
-    updateState({
-      total_days: days,
-      total_reservation: days * valueState.total_rooms
-    })
-  }, [valueState.entry_date, valueState.exit_date])
+    fetchData()
+  }, [action, booking_id])
 
   useEffect(() => {
     customerRepository
@@ -152,64 +206,60 @@ export const useBookingForm = ({
       })
   }, [user.company_id, customerRepository])
 
-  const onBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement>) => {
-      const { name, value } = e.target
-      setTimeout(() => {
-        updateState({ [name]: value })
-      }, 200)
-    },
-    [updateState]
-  )
+  const onChangeFunc = useCallback((e: any) => {
+    if (typeof e.target?.name === 'undefined') return
+    const { value } = e.target
 
-  const onChangeFunc = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (typeof e.target?.name === 'undefined') return
-      const { name, value } = e.target
-      updateState({ [name]: (value as any).code })
+    if ((value as any).name == 'NIT') {
+      setLabels({
+        labelNames: 'Razón social',
+        labelNoDoc: 'Nit',
+        hiddenSurnames: true,
+        requiredSurnames: false
+      })
+    } else {
+      setLabels({
+        labelNames: 'Nombres',
+        labelNoDoc: 'No documento',
+        hiddenSurnames: false,
+        requiredSurnames: true
+      })
+    }
+  }, [])
 
-      if ((value as any).name == 'NIT') {
-        setLabels({
-          labelNames: 'Razón social',
-          labelNoDoc: 'Nit',
-          hiddenSurnames: true,
-          requiredSurnames: false
-        })
-      } else {
-        setLabels({
-          labelNames: 'Nombres',
-          labelNoDoc: 'No documento',
-          hiddenSurnames: false,
-          requiredSurnames: true
-        })
+  const onSetValueInit = useCallback(
+    (val: string, formik: any) => {
+      const exitDate: string = formik.values.exit_date ?? ''
+      if (exitDate !== '' && exitDate < val) {
+        showToast(
+          'La fecha de entrada debe ser menor a la fecha de salida',
+          'error'
+        )
+        formik.setFieldValue('entry_date', '')
+        setTotalsByDates(formik, '', exitDate)
+        return
       }
+      setTotalsByDates(formik, val, exitDate)
     },
-    [updateState]
+    [showToast]
   )
 
-  const onSetValueInit = (val: string) => {
-    if (valueState.exit_date !== '' && valueState.exit_date < val) {
-      showToast(
-        'La fecha de entrada debe ser menor a la fecha de salida',
-        'error'
-      )
-      updateState({ entry_date: '' })
-    } else {
-      updateState({ entry_date: val })
-    }
-  }
-
-  const onSetValueEnd = (val: string) => {
-    if (valueState.entry_date !== '' && valueState.entry_date > val) {
-      showToast(
-        'La fecha de salida debe ser mayor a la fecha de entrada',
-        'error'
-      )
-      updateState({ exit_date: '' })
-    } else {
-      updateState({ exit_date: val })
-    }
-  }
+  const onSetValueEnd = useCallback(
+    (val: string, formik: any) => {
+      const entryDate: string = formik.values.entry_date ?? ''
+      if (entryDate !== '' && entryDate > val) {
+        showToast(
+          'La fecha de salida debe ser mayor a la fecha de entrada',
+          'error'
+        )
+        formik.setFieldValue('exit_date', '')
+        setTotalsByDates(formik, entryDate, '')
+        return
+      }
+      setTotalsByDates(formik, entryDate, val)
+    },
+    [showToast]
+  )
 
   const validateCustomerRoom = (rooms_reservations: any[]) => {
     if (
@@ -247,7 +297,7 @@ export const useBookingForm = ({
 
   const handleSave = useCallback(
     ({ values, setLoading }: IPropsSave<IBookings & { rooms_reservations: any[] }>) => {
-      const data = { ...values, customer_id: valueState.customer_id }
+      const data = { ...values }
       if (!validateRooms(values.rooms_reservations)) {
         return
       }
@@ -271,70 +321,45 @@ export const useBookingForm = ({
         showToast(`Error al crear el registro, ${resp.message}`, 'error')
       })
     },
-    [bookingRepository, onActionForm, setShowForm, resetState, valueState.customer_id]
+    [bookingRepository, onActionForm, setShowForm, resetState, showToast]
   )
 
-  const onSearchCustomer = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { value } = e.target
-    setLoading(true)
-    const params = createParamsUrl({
-      no_document: value,
-      company_id: user.company_id
-    })
-    customerRepository.getCustomerSearch(params).then((resp) => {
-      setLoading(false)
-      const customer = resp ?? []
-      if (customer.length > 0) {
-        updateState({
-          customer_id: customer[0].customer_id,
-          no_document: customer[0].no_document,
-          document_type: customer[0].document_type,
-          names: customer[0].names,
-          surnames: customer[0].surnames,
-          cell_phone: customer[0].cell_phone,
-          cell_phone_emergency: customer[0].cell_phone_emergency,
-          birthdate: customer[0].birthdate
-        })
-      } else {
-        updateState({
-          customer_id: 0,
-          no_document: value,
-          document_type: '',
-          names: '',
-          surnames: '',
-          cell_phone: '',
-          cell_phone_emergency: '',
-          birthdate: ''
-        })
-      }
-    })
-  }
-
-  const getRoomsAvailable = async (): Promise<IRoomAvailability | undefined> => {
-    setLoading(true)
-    try {
-      if (valueState.entry_date === '' || valueState.exit_date === '') {
-        return
-      }
+  const onSearchCustomer = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>, formik: any) => {
+      const { value } = e.target
+      setLoading(true)
       const params = createParamsUrl({
-        company_id: user.company_id,
-        center_id: user.center_id,
-        entry_date: valueState.entry_date,
-        exit_date: valueState.exit_date
+        no_document: value,
+        company_id: user.company_id
       })
-
-      const resp = await bookingRepository.getRoomAvailability<IRoomAvailability>(params)
-
-      if (resp) {
-        setRoomTypes(resp.type_room ?? [])
-        setRoomsAll(resp.rooms ?? [])
-      }
-
-      return resp
-    } finally {
-      setLoading(false)
-    }
-  }
+      customerRepository.getCustomerSearch(params).then((resp) => {
+        setLoading(false)
+        const customer = resp ?? []
+        // setFieldValue campo a campo: no pisa lo que el usuario
+        // este digitando en otros campos mientras llega la respuesta
+        if (customer.length > 0) {
+          formik.setFieldValue('customer_id', customer[0].customer_id)
+          formik.setFieldValue('no_document', customer[0].no_document)
+          formik.setFieldValue('document_type', customer[0].document_type)
+          formik.setFieldValue('names', customer[0].names)
+          formik.setFieldValue('surnames', customer[0].surnames)
+          formik.setFieldValue('cell_phone', customer[0].cell_phone)
+          formik.setFieldValue('cell_phone_emergency', customer[0].cell_phone_emergency)
+          formik.setFieldValue('birthdate', customer[0].birthdate)
+        } else {
+          formik.setFieldValue('customer_id', 0)
+          formik.setFieldValue('no_document', value)
+          formik.setFieldValue('document_type', '')
+          formik.setFieldValue('names', '')
+          formik.setFieldValue('surnames', '')
+          formik.setFieldValue('cell_phone', '')
+          formik.setFieldValue('cell_phone_emergency', '')
+          formik.setFieldValue('birthdate', '')
+        }
+      })
+    },
+    [customerRepository, user.company_id]
+  )
 
   const addRoom = () => {
     addRoomRowRef.current?.()
@@ -385,29 +410,25 @@ export const useBookingForm = ({
           {
             label: labels.labelNames,
             name: 'names',
-            type: 'text',
-            onBlur
+            type: 'text'
           },
           {
             label: 'Apellidos',
             name: 'surnames',
             type: 'text',
-            hidden: labels.hiddenSurnames,
-            onBlur
+            hidden: labels.hiddenSurnames
           },
           {
             label: 'Celular',
             name: 'cell_phone',
             type: 'text',
-            keyfilter: 'int',
-            onBlur
+            keyfilter: 'int'
           },
           {
             label: 'Email',
             name: 'email',
             type: 'text',
-            keyfilter: 'email',
-            onBlur
+            keyfilter: 'email'
           }
         ]
       },
@@ -430,7 +451,7 @@ export const useBookingForm = ({
             type: 'date',
             showTime: true,
             onSetValue: onSetValueInit,
-            onCommitValue: getRoomsAvailable
+            onCommitValue: onCommitEntry
           },
           {
             label: 'Fecha de salida',
@@ -438,14 +459,13 @@ export const useBookingForm = ({
             type: 'date',
             showTime: true,
             onSetValue: onSetValueEnd,
-            onCommitValue: getRoomsAvailable
+            onCommitValue: onCommitExit
           },
           {
             label: 'Total días',
             name: 'total_days',
             type: 'text',
             keyfilter: 'int',
-            value: valueState.total_days,
             disabled: true,
             style: { width: '10rem' }
           },
@@ -486,13 +506,13 @@ export const useBookingForm = ({
       }
     ],
     [
-      valueState,
       customersAll,
-      onBlur,
       onChangeFunc,
       labels,
       onSetValueInit,
       onSetValueEnd,
+      onCommitEntry,
+      onCommitExit,
       onSearchCustomer,
       roomTypes,
       roomsAll,

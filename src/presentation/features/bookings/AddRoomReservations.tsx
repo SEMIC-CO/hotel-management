@@ -1,11 +1,10 @@
 import {type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useState} from 'react'
 import {EditList} from '../../components/ui/DataTable/EditList'
 import type { IField, IOptionsSelect } from '../../../core/shared/types/forms'
-import {useBookingStore} from '../../../infrastructure/stores/booking.store'
+import {useFormikContext} from 'formik'
 import type { typeToast } from '../../../core/shared/types/types'
 import type { ICustomers } from '../../../core/shared/types/data'
 import {AddCustomersRooms} from './AddCustomersRooms'
-import {useShallow} from 'zustand/react/shallow'
 
 export interface IReservation {
   key: number
@@ -56,53 +55,14 @@ export const AddRoomReservations = ({
   onRegisterAddRow
 }: AddRoomReservationsProps) => {
   const [guestRoom, setGuestRoom] = useState<IGuestsRooms | null>(null)
-  // const [roomTypes, setRoomTypes] = useState<IOptionsSelect[]>([])
   const [rooms, setRooms] = useState<IOptionsSelect[]>([])
-  // const [roomsAll, setRoomsAll] = useState<IOptionsSelect[]>([])
 
-  // const valuesState = useBookingStore((state) => state.values)
-  // const updateState = useBookingStore((state) => state.updateState)
-  // console.log('valuesState', valuesState)
-
-  const { updateState, valuesState } = useBookingStore(
-    useShallow((state) => ({
-      updateState: state.updateState,
-      valuesState: state.values
-    }))
-  )
-
-  // useEffect(() => {
-  //   // const rowsData = roomsAll.map((item) => ({
-  //   //   key: item.key,
-  //   //   price: 0,
-  //   //   price_text: 'Seleccione aquí..',
-  //   //   room: '',
-  //   //   room_text: 'Seleccione aquí..',
-  //   //   room_type: 0,
-  //   //   room_type_text: 'Seleccione aquí..',
-  //   // }))
-  //   // console.log('rowsData', rowsData)
-
-  //   console.log('roomsAll AddRoomReservations', roomsAll)
-  //   console.log('dataList AddRoomReservations', dataList)
-  // }, [roomsAll, dataList])
-
-  // const user = useSessionStore(useShallow((state) => state.values.user))
+  // Los valores del formulario viven en Formik (este componente se
+  // renderiza dentro del arbol del Form). Nada se escribe al store
+  // para no reiniciar el formulario en cada cambio.
+  const { values, setFieldValue } = useFormikContext<any>()
 
   const [showForm, setShowForm] = useState(false)
-
-  // console.log('valuesState', valuesState)
-  // console.log('AddRoomReservations data', data)
-
-  // useEffect(() => {
-  //   console.log('useEffect 1')
-
-  // }, [
-  //   valuesState.entry_date,
-  //   valuesState.exit_date,
-  //   user.company_id,
-  //   user.center_id
-  // ])
 
   useEffect(() => {
     const total = dataList.reduce((acc, item) => {
@@ -114,12 +74,10 @@ export const AddRoomReservations = ({
       }
       return acc
     }, 0)
-    updateState({
-      rooms_reservations: dataList,
-      total_rooms: total,
-      total_reservation: total * valuesState.total_days
-    })
-  }, [dataList, updateState, valuesState.total_days])
+    setFieldValue('rooms_reservations', dataList)
+    setFieldValue('total_rooms', total)
+    setFieldValue('total_reservation', total * (values.total_days ?? 0))
+  }, [dataList, setFieldValue, values.total_days])
 
   const onChangeRoom = useCallback(
     (e: any, rowData: any) => {
@@ -217,19 +175,19 @@ export const AddRoomReservations = ({
       }))
     )
 
-    if (!validateGuestRoom(dataList, valuesState.no_document)) {
+    if (!validateGuestRoom(dataList, values.no_document)) {
       setGuestRoom({
         room: row.room,
         room_text: row.room_text,
-        customer_id: valuesState.customer_id,
-        names: valuesState.names,
-        surnames: valuesState.surnames,
-        document_type: valuesState.document_type,
-        no_document: valuesState.no_document,
-        email: valuesState.email || '',
-        birthdate: valuesState.birthdate || '',
-        cell_phone: valuesState.cell_phone,
-        cell_phone_emergency: valuesState?.cell_phone_emergency || ''
+        customer_id: values.customer_id,
+        names: values.names,
+        surnames: values.surnames,
+        document_type: values.document_type,
+        no_document: values.no_document,
+        email: values.email || '',
+        birthdate: values.birthdate || '',
+        cell_phone: values.cell_phone,
+        cell_phone_emergency: values?.cell_phone_emergency || ''
       })
     }
 
@@ -262,7 +220,7 @@ export const AddRoomReservations = ({
           placeholder: 'Seleccione el precio',
           options: []
         },
-        valuesState.type == 'INGRESO' && {
+        values.type == 'INGRESO' && {
           header: 'Agregar huesped',
           label: 'Agregar',
           name: 'add',
@@ -270,10 +228,8 @@ export const AddRoomReservations = ({
           click: addCustomersRoom
         }
       ].filter(Boolean) as IField[],
-    [roomTypes, rooms, onChangeTypeRoom, onChangeRoom]
+    [roomTypes, rooms, onChangeTypeRoom, onChangeRoom, values.type]
   )
-  console.log("valuesState.type", valuesState.type);
-  
 
   return (
     <div className='block w-full'>
@@ -299,13 +255,13 @@ export const AddRoomReservations = ({
         <div>
           <h2 className='font-semibold mt-2'>
             Valor total habitación: $
-            {Intl.NumberFormat().format(valuesState.total_rooms)}
+            {Intl.NumberFormat().format(values.total_rooms ?? 0)}
           </h2>
         </div>
         <div>
           <h2 className='font-semibold mt-2'>
             Valor total reserva: $
-            {Intl.NumberFormat().format(valuesState.total_reservation)}
+            {Intl.NumberFormat().format(values.total_reservation ?? 0)}
           </h2>
         </div>
       </div>

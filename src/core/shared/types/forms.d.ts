@@ -69,7 +69,7 @@ export interface IField {
   onChange?: (e: any, rowData?: any) => void
   onBlur?: (e: any, form?: any) => void
   onChangeFunc?: (e: any, form?: any) => void
-  onSetValue?: (e: any) => void
+  onSetValue?: (e: any, form?: any) => void
   style?: CSSProperties | undefined
   severity?: 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger',
   component?: ReactElement | ReactElement[] | undefined,

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Calendar} from 'primereact/calendar'
 import {addLocale} from 'primereact/api'
-import {ErrorMessage, useField} from 'formik'
+import {ErrorMessage, useField, useFormikContext} from 'formik'
 import {isInvalid} from '../../../core/shared/utils/utils'
 import type { Nullable } from 'primereact/ts-helpers'
 import dayjs from 'dayjs'
@@ -16,8 +16,8 @@ interface Props {
   disabled?: boolean
   date?: Date
   showTime?: boolean
-  onSetValue?: (e: any) => void
-  onCommitValue?: (e: any) => void
+  onSetValue?: (e: any, form?: any) => void
+  onCommitValue?: (e: any, form?: any) => void
 }
 
 export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props) => {
@@ -26,10 +26,7 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
   const meta = field[1]
   const helpers = field[2]
   const { setValue } = helpers
-
-  // console.log('field', field)
-  // console.log('meta', meta)
-  // console.log('helpers', helpers)
+  const formik = useFormikContext()
 
   useEffect(() => {
     if (meta.touched) {
@@ -56,7 +53,7 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
     const dateFormat = dayjs(props.date).format('YYYY-MM-DD HH:mm:ss')
     setValue(dateFormat)
     if (typeof onSetValue === 'function') {
-      onSetValue(dateFormat)
+      onSetValue(dateFormat, formik)
     }
   }, [props.date])
 
@@ -74,7 +71,7 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
       const dateFormat = dayjs(value).format('YYYY-MM-DD HH:mm:ss')
       setValue(dateFormat)
       if (typeof onSetValue === 'function') {
-        onSetValue(dateFormat)
+        onSetValue(dateFormat, formik)
       }
     }
   }
@@ -84,15 +81,9 @@ export const DateField = ({ label, onSetValue, onCommitValue, ...props }: Props)
 
     const dateFormat = dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     if (typeof onCommitValue === 'function') {
-      onCommitValue(dateFormat)
+      onCommitValue(dateFormat, formik)
     }
   }
-  // const onHide = () => {
-  //   if (typeof onSetValue === 'function') {
-  //     const dateFormat = dayjs(date).format('YYYY-MM-DD HH:mm:ss')
-  //     onSetValue(dateFormat)
-  //   }
-  // }
 
   addLocale('es', {
     firstDayOfWeek: 1,
