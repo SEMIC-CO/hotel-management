@@ -11,9 +11,6 @@ const valuesOthers = {
     unit_value: 0,
     total_value: 0,
     observations: '',
-    created_by: '',
-    created_at: '',
-    total: 0
 }
 
 export type OtherServicesFormValues = typeof valuesOthers

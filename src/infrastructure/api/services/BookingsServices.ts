@@ -1,12 +1,15 @@
 import type { IBookingRepository } from '../../../core/domain/repositories'
 import type { IBookings } from '../../../core/shared/types/data'
 import type { IRespSuccess } from '../../../core/shared/types/forms'
-import {useFetch} from '../client/httpClient'
-import {validateSession} from '../../auth/sessionManager'
+import { useFetch } from '../client/httpClient'
+import { validateSession } from '../../auth/sessionManager'
 interface Body {
   data?: IBookings[]
 }
 interface BodyRoom<T> {
+  data?: T
+}
+interface BodyOtherServices<T> {
   data?: T
 }
 
@@ -76,6 +79,21 @@ class BookingsServices implements IBookingRepository {
     const resp = await useFetch(service, { ...data }, method)
     await validateSession(resp)
     const body = (await resp.json()) as Body & IRespSuccess
+    if (resp.ok) {
+      return body
+    }
+  }
+
+  saveOtherServices = async <T extends Record<string, any>>(data: T) => {
+    let service = 'otherServices'
+    let method = 'POST'     
+    if (typeof data.key !== 'undefined') {
+      service = `otherServices/${data.key}`
+      method = 'PATCH'
+    }
+    const resp = await useFetch(service, { ...data }, method)
+    await validateSession(resp)
+    const body = (await resp.json()) as BodyOtherServices<T> & IRespSuccess
     if (resp.ok) {
       return body
     }

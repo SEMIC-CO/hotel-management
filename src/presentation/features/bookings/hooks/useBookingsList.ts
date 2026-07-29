@@ -5,6 +5,7 @@ import { createParamsUrl } from '../../../../core/shared/utils/utils'
 import type { IBookings } from '../../../../core/shared/types/data'
 import { useBookingStore } from '../../../../infrastructure/stores/booking.store'
 import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
+import { useOtherServicesStore } from '../../../../infrastructure/stores/otherServices.store'
 
 export const useBookingsList = () => {
   const { bookingRepository } = useContainer()
@@ -28,6 +29,7 @@ export const useBookingsList = () => {
   const [showFormOthers, setShowFormOthers] = useState(false)
   const { updateState } = useBookingStore()
   const updateStateAdvance = useAdvancesStore(state => state.updateState)
+  const updateStateOtherServices = useOtherServicesStore(state => state.updateState)
 
   const refreshList = useCallback(() => {
     setLoading(true)
@@ -61,7 +63,7 @@ export const useBookingsList = () => {
 
   const onFormInvoice = useCallback(
     (row: IBookings) => {
-      setShowFormOthers(true)
+      setShowFormInvoice(true)
       updateState(row)
     },
     [updateState]
@@ -81,12 +83,11 @@ export const useBookingsList = () => {
   const onFormOtherServices = useCallback(
     (row: IBookings) => {
       setShowFormOthers(true)
-      updateStateAdvance({
+      updateStateOtherServices({
         booking_id: row.booking_id,
-        total: row.total,
       })
     },
-    [updateStateAdvance]
+    [updateStateOtherServices]
   )
 
   const onActionForm = useCallback(() => {

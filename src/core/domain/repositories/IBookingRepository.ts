@@ -8,10 +8,15 @@ export interface IBookingRepository {
   getCalendarReservations: (params?: string) => Promise<any | undefined>
   save: (data: IBookings) => Promise<(Body & IRespSuccess) | undefined>
   saveAdvance: (data: IBookings) => Promise<(Body & IRespSuccess) | undefined>
+  saveOtherServices: <T extends Record<string, any>>(data: T) => Promise<(BodyOtherServices<T> & IRespSuccess) | undefined>
   confirmReservation: (booking_id: number) => Promise<IRespSuccess | undefined>
   cancelReservation: (booking_id: number) => Promise<IRespSuccess | undefined>
 }
 
 interface Body {
   data?: IBookings[]
+}
+
+interface BodyOtherServices<T> {
+  data?: T
 }

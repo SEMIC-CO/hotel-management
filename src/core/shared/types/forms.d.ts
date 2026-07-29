@@ -87,7 +87,7 @@ export interface FormProps {
   width?: string
   fields: IField[]
   handleSave: (dataForm: any, form?: FormikHelpers<any>) => void
-  validationSchema: yup.ObjectSchema<any>
+  validationSchema?: yup.ObjectSchema<any>
   useStoreForm: UseBoundStore<StoreApi<IStore>>
   classForm?: string
   type?: 'dialog' | 'normal'
