@@ -17,6 +17,7 @@ import {useContainer} from '../../../hooks/useContainer'
 import {ACTION_TYPE, DOCUMENT_TYPES} from '../../../../core/shared/utils/constants'
 import {createParamsUrl, formatCurrency} from '../../../../core/shared/utils/utils'
 import {Button} from 'primereact/button'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 interface IEntryExitDates {
   entry_date: string
@@ -92,11 +93,17 @@ export const useBookingForm = ({
         }
 
         return resp
+      } catch (error) {
+        showToast(
+          getApiErrorMessage(error, 'No se pudo consultar la disponibilidad.'),
+          'error'
+        )
+        return undefined
       } finally {
         setLoading(false)
       }
     },
-    [bookingRepository, user.company_id, user.center_id]
+    [bookingRepository, user.company_id, user.center_id, showToast]
   )
 
   // Al ocultarse el calendario se consulta disponibilidad. Se usa el valor
@@ -193,9 +200,16 @@ export const useBookingForm = ({
         setGuestRoomList([])
         return
       }
-      await fetchDataEdit()
+      try {
+        await fetchDataEdit()
+      } catch (error) {
+        showToast(
+          getApiErrorMessage(error, 'No se pudo cargar la información de la reserva.'),
+          'error'
+        )
+      }
     }
-    fetchData()
+    void fetchData()
   }, [action, booking_id])
 
   useEffect(() => {
@@ -204,7 +218,14 @@ export const useBookingForm = ({
       .then((resp) => {
         setCustomersAll(resp ?? [])
       })
-  }, [user.company_id, customerRepository])
+      .catch((error) => {
+        setCustomersAll([])
+        showToast(
+          getApiErrorMessage(error, 'No se pudo cargar la lista de huéspedes.'),
+          'error'
+        )
+      })
+  }, [user.company_id, customerRepository, showToast])
 
   const onChangeFunc = useCallback((e: any) => {
     if (typeof e.target?.name === 'undefined') return
@@ -308,18 +329,30 @@ export const useBookingForm = ({
         return
       }
       setLoading(true)
-      bookingRepository.save(data).then((resp) => {
-        setLoading(false)
-        if (typeof resp === 'undefined') return
-        if (resp.ok) {
-          onActionForm?.(resp.data)
-          setShowForm(false)
-          resetState()
-          showToast('Reservación registrada correctamente', 'success')
-          return
-        }
-        showToast(`Error al crear el registro, ${resp.message}`, 'error')
-      })
+      bookingRepository
+        .save(data)
+        .then((resp) => {
+          if (resp.ok) {
+            onActionForm?.(resp.data)
+            setShowForm(false)
+            resetState()
+            showToast('Reservación registrada correctamente', 'success')
+            return
+          }
+          showToast(
+            `Error al crear el registro, ${resp.message ?? 'intente nuevamente'}`,
+            'error'
+          )
+        })
+        .catch((error) => {
+          showToast(
+            getApiErrorMessage(error, 'No se pudo guardar la reservación.'),
+            'error'
+          )
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     },
     [bookingRepository, onActionForm, setShowForm, resetState, showToast]
   )
@@ -332,33 +365,43 @@ export const useBookingForm = ({
         no_document: value,
         company_id: user.company_id
       })
-      customerRepository.getCustomerSearch(params).then((resp) => {
-        setLoading(false)
-        const customer = resp ?? []
-        // setFieldValue campo a campo: no pisa lo que el usuario
-        // este digitando en otros campos mientras llega la respuesta
-        if (customer.length > 0) {
-          formik.setFieldValue('customer_id', customer[0].customer_id)
-          formik.setFieldValue('no_document', customer[0].no_document)
-          formik.setFieldValue('document_type', customer[0].document_type)
-          formik.setFieldValue('names', customer[0].names)
-          formik.setFieldValue('surnames', customer[0].surnames)
-          formik.setFieldValue('cell_phone', customer[0].cell_phone)
-          formik.setFieldValue('cell_phone_emergency', customer[0].cell_phone_emergency)
-          formik.setFieldValue('birthdate', customer[0].birthdate)
-        } else {
-          formik.setFieldValue('customer_id', 0)
-          formik.setFieldValue('no_document', value)
-          formik.setFieldValue('document_type', '')
-          formik.setFieldValue('names', '')
-          formik.setFieldValue('surnames', '')
-          formik.setFieldValue('cell_phone', '')
-          formik.setFieldValue('cell_phone_emergency', '')
-          formik.setFieldValue('birthdate', '')
-        }
-      })
+      customerRepository
+        .getCustomerSearch(params)
+        .then((resp) => {
+          const customer = resp ?? []
+          // setFieldValue campo a campo: no pisa lo que el usuario
+          // este digitando en otros campos mientras llega la respuesta
+          if (customer.length > 0) {
+            formik.setFieldValue('customer_id', customer[0].customer_id)
+            formik.setFieldValue('no_document', customer[0].no_document)
+            formik.setFieldValue('document_type', customer[0].document_type)
+            formik.setFieldValue('names', customer[0].names)
+            formik.setFieldValue('surnames', customer[0].surnames)
+            formik.setFieldValue('cell_phone', customer[0].cell_phone)
+            formik.setFieldValue('cell_phone_emergency', customer[0].cell_phone_emergency)
+            formik.setFieldValue('birthdate', customer[0].birthdate)
+          } else {
+            formik.setFieldValue('customer_id', 0)
+            formik.setFieldValue('no_document', value)
+            formik.setFieldValue('document_type', '')
+            formik.setFieldValue('names', '')
+            formik.setFieldValue('surnames', '')
+            formik.setFieldValue('cell_phone', '')
+            formik.setFieldValue('cell_phone_emergency', '')
+            formik.setFieldValue('birthdate', '')
+          }
+        })
+        .catch((error) => {
+          showToast(
+            getApiErrorMessage(error, 'No se pudo consultar el huésped.'),
+            'error'
+          )
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     },
-    [customerRepository, user.company_id]
+    [customerRepository, user.company_id, showToast]
   )
 
   const addRoom = () => {

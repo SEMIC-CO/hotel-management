@@ -12,6 +12,7 @@ import { useContainer } from '../../../hooks/useContainer'
 import { useUser } from '../../../hooks/useUser'
 import { createParamsUrl, formatCurrency, parseCurrency } from '../../../../core/shared/utils/utils'
 import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useAdvanceForm = ({
   onActionForm,
@@ -39,30 +40,52 @@ export const useAdvanceForm = ({
       .getBanksAccounts<IOptionsSelect[]>(urlParams)
       .then((resp) => {
         setAccount(resp ?? [])
+      })
+      .catch((error) => {
+        setAccount([])
+        showToast(
+          getApiErrorMessage(error, 'No se pudieron cargar las cuentas bancarias.'),
+          'error'
+        )
+      })
+      .finally(() => {
         setLoading(false)
       })
     updateState({ payment_date: new Date() })
-  }, [user.company_id, user.center_id, settingsRepository])
+  }, [user.company_id, user.center_id, settingsRepository, showToast, updateState])
 
   const handleSave = useCallback(
-    ({ values, setLoading: _setLoading }: IPropsSave<IBookings>) => {
+    ({ values, setLoading: setFormLoading }: IPropsSave<IBookings>) => {
       setLoading(true)
-      bookingRepository.saveAdvance(values).then(resp => {
-        if (typeof resp === 'undefined') return
-        if (resp.ok) {
-          resetState()
-          setShowForm(false)
+      setFormLoading(true)
+      bookingRepository
+        .saveAdvance(values)
+        .then((resp) => {
+          if (resp.ok) {
+            resetState()
+            setShowForm(false)
+            onActionForm?.(resp.data)
+            showToast(
+              resp.message ?? 'Se registro el anticipo correctamente!',
+              'success'
+            )
+            return
+          }
           showToast(
-            resp?.message ?? 'Se registro el anticipo correctamente!',
-            'success'
+            `Error al registrar el anticipo, ${resp.message ?? 'intente nuevamente'}`,
+            'error'
           )
-          return
-        }
-        showToast(`Error al registrar el anticipo, ${resp.message}`, 'error')
-
-      }).finally(() => {
-        setLoading(false)
-      })
+        })
+        .catch((error) => {
+          showToast(
+            getApiErrorMessage(error, 'No se pudo registrar el anticipo.'),
+            'error'
+          )
+        })
+        .finally(() => {
+          setFormLoading(false)
+          setLoading(false)
+        })
     },
     [bookingRepository, onActionForm, setShowForm, resetState, showToast]
   )

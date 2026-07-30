@@ -2,10 +2,10 @@ import type { ICustomers } from '../../shared/types/data'
 import type { IRespSuccess, ISearch } from '../../shared/types/forms'
 
 export interface ICustomerRepository {
-  get: (params?: string) => Promise<ICustomers[] | undefined>
-  getCustomerSearch: (param: string) => Promise<ISearch[] | undefined>
-  save: (data: ICustomers) => Promise<(Body & IRespSuccess) | undefined>
-  delete: (id: number | string) => Promise<(Body & IRespSuccess) | undefined>
+  get: (params?: string) => Promise<ICustomers[]>
+  getCustomerSearch: (param: string) => Promise<ISearch[]>
+  save: (data: ICustomers) => Promise<Body & IRespSuccess>
+  delete: (id: number | string) => Promise<Body & IRespSuccess>
 }
 
 interface Body {

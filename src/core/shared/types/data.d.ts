@@ -1,5 +1,6 @@
 export interface IConstants {
   center_id?: number
+  company_id?: number
   created_at?: string
   created_by?: string | number
   updated_at?: string
@@ -69,6 +70,32 @@ export interface IBookings {
   invoice_number?: string
   type?: string
   observations?: string
+}
+export interface IOtherService {
+  id?: string
+  booking_id: string | number
+  service_date: string
+  service_name: string
+  quantity: number
+  unit_value: number
+  total_value: number
+  observations: string
+}
+export interface IOtherServicesPayload {
+  key?: number | string
+  booking_id: string | number
+  center_id?: number
+  company_id?: number
+  created_by?: string | number
+  other_services: IOtherService[]
+}
+export interface ICalendarReservation {
+  id: number
+  room_id?: number
+  customer: string
+  start: string
+  end: string
+  state?: string
 }
 export interface IUsers {
   key?: number

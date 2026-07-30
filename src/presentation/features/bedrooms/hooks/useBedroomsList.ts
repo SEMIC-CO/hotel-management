@@ -5,6 +5,7 @@ import type { IBedrooms } from '../../../../core/shared/types/data'
 import {useBedroomsStore} from '../../../../infrastructure/stores/bedrooms.store'
 import {useUser} from '../../../hooks/useUser'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useBedroomsList = () => {
   const { bedroomRepository } = useContainer()
@@ -24,12 +25,22 @@ export const useBedroomsList = () => {
       center_id: user.center_id
     }
     const urlParams = createParamsUrl(params)
-    bedroomRepository.get(urlParams).then((resp) => {
-      if (typeof resp !== 'undefined') {
-        setData(resp ?? [])
-      }
-      setLoading(false)
-    })
+    bedroomRepository
+      .get(urlParams)
+      .then((resp) => {
+        setData(resp)
+      })
+      .catch((error) => {
+        setData([])
+        toast.current?.show({
+          severity: 'error',
+          summary: '',
+          detail: getApiErrorMessage(error, 'No se pudo cargar la lista de habitaciones.')
+        })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [user.company_id, user.center_id, bedroomRepository])
 
   const update = useCallback(
@@ -41,17 +52,27 @@ export const useBedroomsList = () => {
   )
 
   const deleteItem = useCallback(
-    (row: any | undefined) => {
+    (row: IBedrooms | undefined) => {
       if (typeof row === 'undefined') return
-      bedroomRepository.delete(row.room_id).then((resp) => {
-        if (typeof resp === 'undefined') return
-        setData((prev) => prev.filter((p) => p.room_id !== row.room_id))
-        toast.current?.show({
-          severity: 'error',
-          summary: '',
-          detail: resp.message
+      bedroomRepository
+        .delete(row.room_id)
+        .then((resp) => {
+          if (resp.ok) {
+            setData((prev) => prev.filter((p) => p.room_id !== row.room_id))
+          }
+          toast.current?.show({
+            severity: resp.ok ? 'success' : 'error',
+            summary: '',
+            detail: resp.message ?? 'No fue posible eliminar la habitación.'
+          })
         })
-      })
+        .catch((error) => {
+          toast.current?.show({
+            severity: 'error',
+            summary: '',
+            detail: getApiErrorMessage(error, 'No fue posible eliminar la habitación.')
+          })
+        })
     },
     [bedroomRepository]
   )

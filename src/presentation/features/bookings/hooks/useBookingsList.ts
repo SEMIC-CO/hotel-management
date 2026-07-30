@@ -6,6 +6,7 @@ import type { IBookings } from '../../../../core/shared/types/data'
 import { useBookingStore } from '../../../../infrastructure/stores/booking.store'
 import { useAdvancesStore } from '../../../../infrastructure/stores/advances.store'
 import { useOtherServicesStore } from '../../../../infrastructure/stores/otherServices.store'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useBookingsList = () => {
   const { bookingRepository } = useContainer()
@@ -41,7 +42,15 @@ export const useBookingsList = () => {
     bookingRepository
       .get(urlParams)
       .then((resp) => {
-        setData(resp ?? [])
+        setData(resp)
+      })
+      .catch((error) => {
+        setData([])
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: getApiErrorMessage(error, 'No se pudieron cargar las reservas.')
+        })
       })
       .finally(() => {
         setLoading(false)
@@ -98,7 +107,15 @@ export const useBookingsList = () => {
     (row: IBookings) => {
       bookingRepository
         .confirmReservation(row.booking_id)
-        .then(() => {
+        .then((resp) => {
+          if (!resp.ok) {
+            toast.current?.show({
+              severity: 'error',
+              summary: 'Error',
+              detail: resp.message ?? `No se pudo confirmar la reserva ${row.booking_id}`
+            })
+            return
+          }
           toast.current?.show({
             severity: 'success',
             summary: 'Reserva confirmada',
@@ -106,11 +123,14 @@ export const useBookingsList = () => {
           })
           refreshList()
         })
-        .catch(() => {
+        .catch((error) => {
           toast.current?.show({
             severity: 'error',
             summary: 'Error',
-            detail: `No se pudo confirmar la reserva ${row.booking_id}`
+            detail: getApiErrorMessage(
+              error,
+              `No se pudo confirmar la reserva ${row.booking_id}`
+            )
           })
         })
     },
@@ -121,7 +141,15 @@ export const useBookingsList = () => {
     (row: IBookings) => {
       bookingRepository
         .cancelReservation(row.booking_id)
-        .then(() => {
+        .then((resp) => {
+          if (!resp.ok) {
+            toast.current?.show({
+              severity: 'error',
+              summary: 'Error',
+              detail: resp.message ?? `No se pudo cancelar la reserva ${row.booking_id}`
+            })
+            return
+          }
           toast.current?.show({
             severity: 'success',
             summary: 'Reserva cancelada',
@@ -129,11 +157,14 @@ export const useBookingsList = () => {
           })
           refreshList()
         })
-        .catch(() => {
+        .catch((error) => {
           toast.current?.show({
             severity: 'error',
             summary: 'Error',
-            detail: `No se pudo cancelar la reserva ${row.booking_id}`
+            detail: getApiErrorMessage(
+              error,
+              `No se pudo cancelar la reserva ${row.booking_id}`
+            )
           })
         })
     },

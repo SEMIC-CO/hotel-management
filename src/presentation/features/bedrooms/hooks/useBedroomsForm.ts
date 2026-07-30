@@ -8,6 +8,7 @@ import {useBedroomsStore} from '../../../../infrastructure/stores/bedrooms.store
 import {ROOM_STATES} from '../../../../core/shared/utils/constants'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
 import {useUser} from '../../../hooks/useUser'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useBedroomsForm = ({
   onActionForm,
@@ -27,31 +28,44 @@ export const useBedroomsForm = ({
       company_id: user.company_id
     })
     settingsRepository.getRoomTypes(params).then((resp) => {
-      if (typeof resp !== 'undefined') {
-        setRoomTypes(resp ?? [])
-      }
+      setRoomTypes(resp)
+    }).catch((error) => {
+      setRoomTypes([])
+      toast.current?.show({
+        severity: 'error',
+        summary: '',
+        detail: getApiErrorMessage(error, 'No se pudieron cargar los tipos de habitación.')
+      })
     })
   }, [user.center_id, user.company_id, settingsRepository])
 
   const handleSave = useCallback(
     ({ values, setLoading }: IPropsSave<IBedrooms>) => {
-      let typeToast: 'success' | 'info' | 'warn' | 'error' | undefined = 'error'
       setLoading(true)
-      bedroomRepository.save(values).then((resp) => {
-        if (typeof resp === 'undefined') return
-        if (resp.ok) {
-          setShowForm(false)
-          onActionForm?.(resp.data)
-          typeToast = 'success'
-          resetState()
-        }
-        setLoading(false)
-        toast.current?.show({
-          severity: typeToast,
-          summary: '',
-          detail: resp.message
+      bedroomRepository
+        .save(values)
+        .then((resp) => {
+          if (resp.ok) {
+            setShowForm(false)
+            onActionForm?.(resp.data)
+            resetState()
+          }
+          toast.current?.show({
+            severity: resp.ok ? 'success' : 'error',
+            summary: '',
+            detail: resp.message ?? 'No fue posible guardar la habitación.'
+          })
         })
-      })
+        .catch((error) => {
+          toast.current?.show({
+            severity: 'error',
+            summary: '',
+            detail: getApiErrorMessage(error, 'No fue posible guardar la habitación.')
+          })
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     },
     [bedroomRepository, onActionForm, setShowForm, resetState]
   )

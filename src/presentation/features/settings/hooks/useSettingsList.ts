@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Toast } from 'primereact/toast'
+import { useCallback, useEffect, useState } from 'react'
 import { useList } from '../../../hooks/useList'
 import { useUser } from '../../../hooks/useUser'
 import { createParamsUrl } from '../../../../core/shared/utils/utils'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 interface UseSettingsListOptions {
   getFn: (params: string) => Promise<any[] | undefined>
@@ -29,16 +29,26 @@ export const useSettingsList = (
   } = useList<any>()
 
   const [columns, setColumns] = useState<any[]>([])
-  const toastRef = useRef<Toast>(null)
 
   const refreshList = useCallback(() => {
     setLoading(true)
     const urlParams = createParamsUrl({ company_id: user.company_id })
-    getFn(urlParams).then((resp) => {
-      setData(resp ?? [])
-      setLoading(false)
-    })
-  }, [user.company_id, getFn, setData, setLoading])
+    getFn(urlParams)
+      .then((resp) => {
+        setData(resp ?? [])
+      })
+      .catch((error) => {
+        setData([])
+        toast.current?.show({
+          severity: 'error',
+          summary: '',
+          detail: getApiErrorMessage(error, 'No se pudo cargar la información.')
+        })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [user.company_id, getFn, setData, setLoading, toast])
 
   useEffect(() => {
     refreshList()
@@ -48,17 +58,26 @@ export const useSettingsList = (
     (row: any) => {
       const key = row[keyField]
       if (typeof key === 'undefined') return
-      deleteFn(key).then((resp) => {
-        if (typeof resp === 'undefined') return
-        setData((prev) => prev.filter((p: any) => p[keyField] !== key))
-        toastRef.current?.show({
-          severity: 'error',
-          summary: '',
-          detail: resp.message
+      deleteFn(key)
+        .then((resp) => {
+          if (resp.ok) {
+            setData((prev) => prev.filter((item: any) => item[keyField] !== key))
+          }
+          toast.current?.show({
+            severity: resp.ok ? 'success' : 'error',
+            summary: '',
+            detail: resp.message ?? 'No fue posible eliminar el registro.'
+          })
         })
-      })
+        .catch((error) => {
+          toast.current?.show({
+            severity: 'error',
+            summary: '',
+            detail: getApiErrorMessage(error, 'No fue posible eliminar el registro.')
+          })
+        })
     },
-    [deleteFn, keyField, setData]
+    [deleteFn, keyField, setData, toast]
   )
 
   const onActionForm = useCallback(

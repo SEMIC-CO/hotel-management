@@ -4,7 +4,6 @@ import {Login} from '../../presentation/layout/web/Login'
 import {ProtectedRoutes} from './ProtectedRoutes'
 import {PublicRoutes} from './PublicRoutes'
 import {useContainer} from '../../presentation/hooks/useContainer'
-import type { ISession } from '../../core/shared/types/data'
 import {useSessionStore} from '../../infrastructure/stores/session.store'
 import {useEffect, useState} from 'react'
 import {ProgressBar} from 'primereact/progressbar'
@@ -13,22 +12,41 @@ export const Routers = () => {
   const [loading, setLoading] = useState(true)
   const { updateState, resetState } = useSessionStore((state) => state)
   const { authRepository } = useContainer()
+
   useEffect(() => {
-    authRepository.verifySession().then((resp: boolean | ISession) => {
-      if (typeof resp !== 'boolean') {
-        resp.isAuthenticated ? updateState(resp) : resetState()
-      } else {
-        authRepository.refreshToken().then((resp: boolean | ISession) => {
-          if (typeof resp !== 'boolean') {
-            resp.isAuthenticated ? updateState(resp) : resetState()
-          } else {
-            resetState()
-          }
-        })
+    let isMounted = true
+
+    const bootstrapSession = async () => {
+      try {
+        const verifiedSession = await authRepository.verifySession()
+        const session = verifiedSession === false
+          ? await authRepository.refreshToken()
+          : verifiedSession
+
+        if (!isMounted) return
+
+        if (session !== false && session.isAuthenticated) {
+          updateState(session)
+        } else {
+          resetState()
+        }
+      } catch {
+        if (isMounted) {
+          resetState()
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
       }
-      setLoading(false)
-    })
-  }, [])
+    }
+
+    void bootstrapSession()
+
+    return () => {
+      isMounted = false
+    }
+  }, [authRepository, resetState, updateState])
 
   if (loading) {
     return (

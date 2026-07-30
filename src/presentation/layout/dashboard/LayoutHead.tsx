@@ -1,6 +1,7 @@
 import { Avatar } from 'primereact/avatar'
 import { Menubar } from 'primereact/menubar'
 import { Badge } from 'primereact/badge'
+import { Toast } from 'primereact/toast'
 import { useRef } from 'react'
 import { Menu } from 'primereact/menu'
 import { useNavigate } from 'react-router-dom'
@@ -8,25 +9,29 @@ import { useSessionStore } from '../../../infrastructure/stores/session.store'
 import { useUser } from '../../hooks/useUser'
 import { ThemeToggle } from '../../providers/ThemeToggle'
 import { useContainer } from '../../hooks/useContainer'
+import { useToast } from '../../hooks/useToast'
 import { APP_ROUTES } from '../../../core/shared/utils/constants'
+import { getApiErrorMessage } from '../../../infrastructure/api/client/httpClient'
 
 export const LayoutHead = () => {
   const navigate = useNavigate()
   const { resetState } = useSessionStore()
   const { authRepository } = useContainer()
+  const { toast, showToast } = useToast()
   const user = useUser()
 
   const handleLogout = () => {
     authRepository
       .authLogout()
-      .then((resp) => {
-        if (resp.isAuthenticated) {
-          resetState()
-          navigate(APP_ROUTES.LOGIN)
-        }
+      .then(() => {
+        resetState()
+        navigate(APP_ROUTES.LOGIN)
       })
       .catch((error) => {
-        console.error('Error during logout:', error)
+        showToast(
+          getApiErrorMessage(error, 'No fue posible cerrar la sesión.'),
+          'error'
+        )
       })
   }
 
@@ -122,6 +127,7 @@ export const LayoutHead = () => {
 
   return (
     <>
+      <Toast ref={toast} />
       {/* <header className='card mb-2 rounded fixed w-full z-10'> */}
       <header className='card mb-2 rounded'>
         {/* <Menubar model={items} start={start} end={end} /> */}

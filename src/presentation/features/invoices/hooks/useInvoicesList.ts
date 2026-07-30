@@ -3,6 +3,7 @@ import type { IInvoices } from '../../../../core/shared/types/data'
 import {useList} from '../../../hooks/useList'
 import {useContainer} from '../../../hooks/useContainer'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useInvoicesList = () => {
   const { invoiceRepository } = useContainer()
@@ -29,12 +30,20 @@ export const useInvoicesList = () => {
     invoiceRepository
       .get(urlParams)
       .then((resp) => {
-        setData(resp ?? [])
+        setData(resp)
+      })
+      .catch((error) => {
+        setData([])
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: getApiErrorMessage(error, 'No se pudieron cargar las facturas.')
+        })
       })
       .finally(() => {
         setLoading(false)
       })
-  }, [user.company_id, user.center_id, invoiceRepository, setData, setLoading])
+  }, [user.company_id, user.center_id, invoiceRepository, setData, setLoading, toast])
 
   useEffect(() => {
     refreshList()

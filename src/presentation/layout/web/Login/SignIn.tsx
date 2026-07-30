@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { Toast } from 'primereact/toast'
 import { useRef } from 'react'
 import { useContainer } from '../../../hooks/useContainer'
+import { APP_ROUTES } from '../../../../core/shared/utils/constants'
 
 export const SignIn = () => {
   const clientId = import.meta.env.VITE_CLIENT_ID_GOOGLE as string
@@ -21,15 +22,18 @@ export const SignIn = () => {
       username: '',
       password: ''
     },
-    onSubmit: (values) => {
-      authRepository.authLogin(values).then((resp) => {
+    onSubmit: async (values) => {
+      try {
+        const resp = await authRepository.authLogin(values)
         if (resp.isAuthenticated) {
           update(resp)
-          navigate('/app/my-hotel')
+          navigate(`${APP_ROUTES.PRIVATE}/my-hotel`)
         } else {
           showMessage()
         }
-      })
+      } catch {
+        showMessage()
+      }
     }
   })
 

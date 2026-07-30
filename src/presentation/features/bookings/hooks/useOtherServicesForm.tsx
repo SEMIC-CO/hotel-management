@@ -7,12 +7,14 @@ import type {
   IPropsSave,
   IShow,
 } from "../../../../core/shared/types/forms";
+import type { IOtherServicesPayload } from "../../../../core/shared/types/data";
 import { useToast } from "../../../hooks/useToast";
 import { useContainer } from "../../../hooks/useContainer";
 import { useOtherServicesStore, type OtherServicesFormValues } from "../../../../infrastructure/stores/otherServices.store";
 import { Button } from "primereact/button";
 import { List } from "../../../components/ui/DataTable/List";
 import type { IColumns } from "../../../../core/shared/types/datalist";
+import { getApiErrorMessage } from "../../../../infrastructure/api/client/httpClient";
 
 
 type OtherServiceRow = OtherServicesFormValues & { key: number };
@@ -23,10 +25,10 @@ const AddServiceButton = ({
   onAdd,
   editing,
 }: {
-  onAdd: (formik: FormikContextType<any>) => void;
+  onAdd: (formik: FormikContextType<OtherServicesFormValues>) => void;
   editing: boolean;
 }) => {
-  const formik = useFormikContext<any>();
+  const formik = useFormikContext<OtherServicesFormValues>();
   return (
     <Button
     type="button"
@@ -44,10 +46,13 @@ const ServiceActions = ({
   onDelete,
 }: {
   rowData: OtherServiceRow;
-  onEdit: (rowData: OtherServiceRow, formik: FormikContextType<any>) => void;
+  onEdit: (
+    rowData: OtherServiceRow,
+    formik: FormikContextType<OtherServicesFormValues>,
+  ) => void;
   onDelete: (rowData: OtherServiceRow) => void;
 }) => {
-  const formik = useFormikContext<any>();
+  const formik = useFormikContext<OtherServicesFormValues>();
   
   return (
     <div className="flex gap-5 justify-content-center">
@@ -70,7 +75,7 @@ export const useOtherServicesForm = ({
   const { bookingRepository } = useContainer();
 
   const { toast, showToast } = useToast();
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [services, setServices] = useState<OtherServiceRow[]>([]);
   const [editingServiceKey, setEditingServiceKey] = useState<number | null>(null);
 
@@ -80,41 +85,68 @@ export const useOtherServicesForm = ({
   // El Guardar del Form llega aqui sin validacion de campos: los valores
   // del formulario llegan vacios, la data a guardar es la lista `services`
   const handleSave = useCallback(
-    ({ values, setLoading: _setLoading }: IPropsSave) => {
+    ({ values, setLoading: setFormLoading }: IPropsSave<OtherServicesFormValues>) => {
       if (services.length === 0) {
         showToast("Debe agregar al menos un servicio", "error");
         return;
       }
       const {center_id, company_id, created_by} = values;
-      const data = { center_id, company_id, created_by, booking_id, other_services: services };
-      console.log("Guardar otros servicios", data);
+      const data: IOtherServicesPayload = {
+        center_id,
+        company_id,
+        created_by,
+        booking_id,
+        other_services: services,
+      };
 
-      _setLoading(true)
+      setFormLoading(true);
+      setLoading(true);
 
-      bookingRepository.saveOtherServices<OtherServiceRow>(data).then(resp => {
-        if (typeof resp === 'undefined') return
-        if (resp.ok) {
-          resetState()
-          setServices([])
-          setShowForm(false)
+      bookingRepository
+        .saveOtherServices(data)
+        .then((resp) => {
+          if (resp.ok) {
+            resetState();
+            setServices([]);
+            setShowForm(false);
+            onActionForm?.(resp.data);
+            showToast(
+              resp.message ?? 'Se registraron los servicios correctamente!',
+              'success',
+            );
+            return;
+          }
+
           showToast(
-            resp?.message ?? 'Se registraron los servicios correctamente!',
-            'success'
-          )
-          return
-        }
-        showToast(`Error al registrar los servicios, ${resp.message}`, 'error')
-
-      }).finally(() => {
-        _setLoading(false)
-      })
+            `Error al registrar los servicios, ${resp.message ?? 'intente nuevamente'}`,
+            'error',
+          );
+        })
+        .catch((error) => {
+          showToast(
+            getApiErrorMessage(error, 'No se pudieron registrar los servicios.'),
+            'error',
+          );
+        })
+        .finally(() => {
+          setFormLoading(false);
+          setLoading(false);
+        });
     },
-    [services, bookingRepository, onActionForm, setShowForm, resetState, showToast],
+    [
+      services,
+      bookingRepository,
+      booking_id,
+      onActionForm,
+      setShowForm,
+      resetState,
+      showToast,
+    ],
   );
 
   const editRow = (
     rowData: OtherServiceRow,
-    formik: FormikContextType<any>,
+    formik: FormikContextType<OtherServicesFormValues>,
   ) => {
     const { key: _key, ...serviceValues } = rowData;
 
@@ -156,10 +188,17 @@ export const useOtherServicesForm = ({
     );
   };
 
-  const calculateTotalValue = (_e: any, formik: any) => {
-    const quantity = parseFloat(formik.values.quantity);
-    const unitValue = parseFloat(formik.values.unit_value);
-    if (!isNaN(quantity) && !isNaN(unitValue)) {
+  const calculateTotalValue = (
+    _event: unknown,
+    formik?: Pick<
+      FormikContextType<OtherServicesFormValues>,
+      "values" | "setFieldValue"
+    >,
+  ) => {
+    if (!formik) return;
+
+    const { quantity, unit_value: unitValue } = formik.values;
+    if (Number.isFinite(quantity) && Number.isFinite(unitValue)) {
       formik.setFieldValue("total_value", quantity * unitValue);
     }
   };
@@ -206,7 +245,9 @@ export const useOtherServicesForm = ({
   // (Yup), agrega los valores al listado y limpia para el siguiente servicio.
   // El schema NO esta registrado en Formik (para que el boton Guardar no
   // valide los campos vacios), por eso se valida manualmente aqui.
-  const addService = async (formik: FormikContextType<any>) => {
+  const addService = async (
+    formik: FormikContextType<OtherServicesFormValues>,
+  ) => {
     try {
       await validationSchema.validate(formik.values, { abortEarly: false });
     } catch (error) {

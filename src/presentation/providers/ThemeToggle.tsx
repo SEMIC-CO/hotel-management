@@ -4,16 +4,8 @@ import { useThemeStore } from '../../infrastructure/stores/theme.store'
 export const ThemeToggle = () => {
   const { isDarkMode, toggleTheme } = useThemeStore()
 
-  const handleToggle = () => {
-    toggleTheme()
-    // Forzar la actualización del tema en localStorage
-    const savedTheme = localStorage.getItem('theme-storage')
-    if (savedTheme) {
-      const themeData = JSON.parse(savedTheme)
-      themeData.state.isDarkMode = !isDarkMode
-      localStorage.setItem('theme-storage', JSON.stringify(themeData))
-    }
-  }
+  // El middleware persist de Zustand ya sincroniza el estado con localStorage.
+  const handleToggle = () => toggleTheme()
 
   return (
     <Button

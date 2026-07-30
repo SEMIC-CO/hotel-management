@@ -12,6 +12,7 @@ import {buildCustomerFields} from '../../customers/configCustomerFieldsMode'
 import type { IColumns } from '../../../../core/shared/types/datalist'
 import {formatCurrency, parseCurrency} from '../../../../core/shared/utils/utils'
 import type { ICustomers } from '../../../../core/shared/types/data'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useInvoiceForm = ({
   setShowForm
@@ -35,45 +36,55 @@ export const useInvoiceForm = ({
   const updateState = useBookingStore((state) => state.updateState)
 
   const fetchData = useCallback(async () => {
-    const respListRooms = await bookingRepository.getDataEditBookings<any>(
-      `?booking_id=${valueState.booking_id}`
-    )
+    try {
+      const respListRooms = await bookingRepository.getDataEditBookings<any>(
+        `?booking_id=${valueState.booking_id}`
+      )
 
-    const roomsReservations = respListRooms.rooms_reservations ?? []
+      const roomsReservations = respListRooms?.rooms_reservations ?? []
 
-    const listRooms = roomsReservations.map((room: any) => ({
-      key: room.rooms_reservations_id,
-      room_type: room.room_type_text,
-      rooms_reservations_id: room.rooms_reservations_id,
-      unit_price: formatCurrency(room.price),
-      no_room: room.no_room,
-      total: formatCurrency(valueState.total_days * room.price),
-      description: `Tipo de habitación ${room.room_type_text} - habitación ${room.no_room}`
-    }))
-    setRooms(listRooms)
+      const listRooms = roomsReservations.map((room: any) => ({
+        key: room.rooms_reservations_id,
+        room_type: room.room_type_text,
+        rooms_reservations_id: room.rooms_reservations_id,
+        unit_price: formatCurrency(room.price),
+        no_room: room.no_room,
+        total: formatCurrency(valueState.total_days * room.price),
+        description: `Tipo de habitación ${room.room_type_text} - habitación ${room.no_room}`
+      }))
+      setRooms(listRooms)
 
-    const total: number = listRooms.reduce((acumulador: number, room: any) => {
-      return acumulador + parseCurrency(room.total)
-    }, 0)
+      const total: number = listRooms.reduce((acumulador: number, room: any) => {
+        return acumulador + parseCurrency(room.total)
+      }, 0)
 
-    setValuesInvoice((prev) => ({ ...prev, subtotal: total }))
+      setValuesInvoice((prev) => ({ ...prev, subtotal: total }))
 
-    const listGuest = roomsReservations.flatMap(
-      (room: any) => room.guests_rooms ?? []
-    )
+      const listGuest = roomsReservations.flatMap(
+        (room: any) => room.guests_rooms ?? []
+      )
 
-    const listHolders = listGuest.map((guest: any) => ({
-      key: guest.customer_id,
-      code: guest.customer_id,
-      name: `${guest.names} ${guest.surnames}`
-    }))
+      const listHolders = listGuest.map((guest: any) => ({
+        key: guest.customer_id,
+        code: guest.customer_id,
+        name: `${guest.names} ${guest.surnames}`
+      }))
 
-    setGuests(listGuest)
-    setHolders(listHolders)
-  }, [bookingRepository, valueState.booking_id, valueState.total_days])
+      setGuests(listGuest)
+      setHolders(listHolders)
+    } catch (error) {
+      setRooms([])
+      setGuests([])
+      setHolders([])
+      showToast(
+        getApiErrorMessage(error, 'No se pudo cargar la información para facturar.'),
+        'error'
+      )
+    }
+  }, [bookingRepository, valueState.booking_id, valueState.total_days, showToast])
 
   useEffect(() => {
-    fetchData()
+    void fetchData()
   }, [fetchData])
 
   const onSelectHolder = (e: IOptionsSelect) => {
@@ -221,13 +232,20 @@ export const useInvoiceForm = ({
       }
 
       setLoading(true)
-      const resp = await invoiceRepository.save(invoiceData as any)
-      if (resp?.ok) {
-        showToast('Factura generada correctamente', 'success')
-        setLoading(false)
-        setShowForm(false)
-      } else {
-        showToast(resp?.message || 'Error al generar la factura', 'error')
+      try {
+        const resp = await invoiceRepository.save(invoiceData as any)
+        if (resp.ok) {
+          showToast('Factura generada correctamente', 'success')
+          setShowForm(false)
+          return
+        }
+        showToast(resp.message || 'Error al generar la factura', 'error')
+      } catch (error) {
+        showToast(
+          getApiErrorMessage(error, 'No se pudo generar la factura.'),
+          'error'
+        )
+      } finally {
         setLoading(false)
       }
     },

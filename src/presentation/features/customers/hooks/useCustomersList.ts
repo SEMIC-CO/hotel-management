@@ -5,6 +5,7 @@ import type { ICustomers } from '../../../../core/shared/types/data'
 import {useCustomersStore} from '../../../../infrastructure/stores/customers.store'
 import {useUser} from '../../../hooks/useUser'
 import {createParamsUrl} from '../../../../core/shared/utils/utils'
+import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useCustomersList = () => {
   const { customerRepository } = useContainer()
@@ -24,10 +25,22 @@ export const useCustomersList = () => {
       center_id: user.center_id
     }
     const urlParams = createParamsUrl(params)
-    customerRepository.get(urlParams).then((resp) => {
-      setLoading(false)
-      setData(resp ?? [])
-    })
+    customerRepository
+      .get(urlParams)
+      .then((resp) => {
+        setData(resp)
+      })
+      .catch((error) => {
+        setData([])
+        toast.current?.show({
+          severity: 'error',
+          summary: '',
+          detail: getApiErrorMessage(error, 'No se pudo cargar la lista de clientes.')
+        })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [user.company_id, user.center_id, customerRepository])
 
   const update = useCallback(
@@ -41,15 +54,25 @@ export const useCustomersList = () => {
   const deleteItem = useCallback(
     (row: ICustomers) => {
       if (typeof row.key === 'undefined') return
-      customerRepository.delete(row.key).then((resp) => {
-        if (typeof resp === 'undefined') return
-        setData((prev) => prev.filter((p) => p.key !== row.key))
-        toast.current?.show({
-          severity: 'error',
-          summary: '',
-          detail: resp.message
+      customerRepository
+        .delete(row.key)
+        .then((resp) => {
+          if (resp.ok) {
+            setData((prev) => prev.filter((p) => p.key !== row.key))
+          }
+          toast.current?.show({
+            severity: resp.ok ? 'success' : 'error',
+            summary: '',
+            detail: resp.message ?? 'No fue posible eliminar el cliente.'
+          })
         })
-      })
+        .catch((error) => {
+          toast.current?.show({
+            severity: 'error',
+            summary: '',
+            detail: getApiErrorMessage(error, 'No fue posible eliminar el cliente.')
+          })
+        })
     },
     [customerRepository]
   )

@@ -57,8 +57,8 @@ export const VerifyPassword = React.forwardRef<FormRef>((_, ref) => {
             city: String((current.company.city as IOptionsSelect).code ?? '')
           }
         }
-        authRepository.registerCustomer(data).then((resp) => {
-          if (typeof resp === 'object') {
+        authRepository.registerCustomer(data)
+          .then((resp) => {
             if (resp.ok) {
               resetState()
               navigate('login')
@@ -67,15 +67,23 @@ export const VerifyPassword = React.forwardRef<FormRef>((_, ref) => {
                 'Registro exitoso!',
                 'Se ha registrado correctamente, inicia sessión para probar su cuenta demo y conocer todos beneficios'
               )
-            } else {
-              showMessage(
-                'error',
-                'No se ha podido completar su registro!',
-                resp.message
-              )
+              return
             }
+
+            showMessage(
+              'error',
+              'No se ha podido completar su registro!',
+              resp.message
+            )
+          })
+          .catch(() => {
+            showMessage(
+              'error',
+              'No se ha podido completar su registro!',
+              'Verifique su conexión e intente nuevamente.'
+            )
           }
-        })
+          )
       }}
       innerRef={ref}
     >

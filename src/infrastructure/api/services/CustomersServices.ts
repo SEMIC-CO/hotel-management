@@ -1,56 +1,52 @@
 import type { ICustomerRepository } from '../../../core/domain/repositories'
 import type { ICustomers } from '../../../core/shared/types/data'
 import type { IRespSuccess, ISearch } from '../../../core/shared/types/forms'
-import {useFetch} from '../client/httpClient'
-import {validateSession} from '../../auth/sessionManager'
+import { requestApi } from '../client/apiRequest'
+import type { HttpMethod } from '../client/httpClient'
 
-interface Body {
-  data?: ICustomers[]
+interface Body<T> {
+  data?: T
 }
-interface Search {
-  data?: ISearch[]
-}
+
 class CustomersServices implements ICustomerRepository {
   get = async (params = '') => {
-    const resp = await useFetch(`clientes${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = await resp.json() as Body
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<Body<ICustomers[]>>(
+      `clientes${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getCustomerSearch = async (param: string) => {
-    const resp = await useFetch(`clientes${param}`, [], 'GET')
-    await validateSession(resp)
-    const body = await resp.json() as Search
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<Body<ISearch[]>>(
+      `clientes${param}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   save = async (data: ICustomers) => {
     let service = 'clientes'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `clientes/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = await resp.json() as Body & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<Body<ICustomers[]> & IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
   }
 
   delete = async (id: number | string) => {
-    const resp = await useFetch(`clientes/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = await resp.json() as Body & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<Body<ICustomers[]> & IRespSuccess>(
+      `clientes/${id}`,
+      {},
+      'DELETE'
+    )
   }
 }
 

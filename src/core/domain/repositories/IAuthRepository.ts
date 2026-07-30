@@ -6,7 +6,7 @@ export interface IAuthRepository {
   authLogout: () => Promise<ISession>
   verifySession: () => Promise<ISession | false>
   refreshToken: () => Promise<ISession | false>
-  registerCustomer: (data: IRegister) => Promise<Body | false>
+  registerCustomer: (data: IRegister) => Promise<Body>
   getCountries: () => Promise<Options>
   getCities: () => Promise<Options>
 }

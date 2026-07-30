@@ -12,7 +12,7 @@ src/
 │   ├── domain/repositories # Interfaces de repositorios (abstracciones)
 │   └── shared/             # Tipos, utilidades y constantes compartidas
 ├── infrastructure/         # Adaptadores externos (API, stores, auth, DI)
-│   ├── api/                # Cliente HTTP, servicios y auth
+│   ├── api/                # Cliente HTTP, manejo de errores, servicios y auth
 │   ├── auth/               # Manejo de sesión
 │   ├── di/                 # Container con implementaciones concretas
 │   └── stores/             # Estado global (Zustand)
@@ -63,6 +63,13 @@ Para verificar que TypeScript compila correctamente:
 ```bash
 pnpm build    # corre `tsc -b` antes de `vite build`
 ```
+
+## Errores HTTP y sesión
+
+- `infrastructure/api/client/httpClient.tsx` construye solicitudes con cookies y transforma fallos de red, HTTP o respuestas inválidas en `ApiError`.
+- `infrastructure/api/client/apiRequest.ts` es el punto común para los servicios autenticados: valida respuestas 401 mediante `validateSession()` y lee el cuerpo de forma segura.
+- Los repositorios resuelven únicamente respuestas exitosas; los consumidores deben capturar errores y mostrar una retroalimentación apropiada.
+- Todos los endpoints validan respuestas 401 mediante `validateSession()`. Al vencer la sesión, el estado se limpia y la aplicación redirige a la ruta de inicio de sesión.
 
 ## Próximos pasos recomendados
 

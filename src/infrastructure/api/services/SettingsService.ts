@@ -1,14 +1,11 @@
 import type { ISettingsRepository } from '../../../core/domain/repositories'
 import type { IBanksAccount, ICenters, IProfiles, IRoomType, IUsers } from '../../../core/shared/types/data'
 import type { IOptionsSelect, IRespSuccess } from '../../../core/shared/types/forms'
-import {useFetch} from '../client/httpClient'
-import {validateSession} from '../../auth/sessionManager'
+import { requestApi } from '../client/apiRequest'
+import type { HttpMethod } from '../client/httpClient'
 
-interface Options {
-  data?: IOptionsSelect[]
-}
 interface IBody<T> {
-  data: T
+  data?: T
 }
 interface BodyCenters {
   data?: ICenters[]
@@ -28,204 +25,190 @@ interface BodyTypeRooms {
 
 class SettingsService implements ISettingsRepository {
   getRoomTypes = async (params = '') => {
-    const resp = await useFetch(`tipohabitacion${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[]>>(
+      `tipohabitacion${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getCenters = async (params = '') => {
-    const resp = await useFetch(`centers${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options | BodyCenters
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[] | ICenters[]>>(
+      `centers${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getUsers = async (params = '') => {
-    const resp = await useFetch(`usuarios${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options | BodyUsers
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[] | IUsers[]>>(
+      `usuarios${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getProfiles = async (params = '') => {
-    const resp = await useFetch(`perfiles${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyProfiles | Options
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IProfiles[] | IOptionsSelect[]>>(
+      `perfiles${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getCities = async (params = '') => {
-    const resp = await useFetch(`location/cities${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[]>>(
+      `location/cities${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getBanks = async (params = '') => {
-    const resp = await useFetch(`banks/${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options | BodyProfiles
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[] | IProfiles[]>>(
+      `banks/${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getBanksAccounts = async<T>(params = '') => {
-    const resp = await useFetch(`bankAccounts/${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as IBody<T>
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<T>>(
+      `bankAccounts/${params}`,
+      [],
+      'GET'
+    )
+    return (body.data ?? []) as T
   }
 
   getRoomsType = async (params = '') => {
-    const resp = await useFetch(`tipohabitacion/${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options | BodyTypeRooms
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[] | IRoomType[]>>(
+      `tipohabitacion/${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   getSequences = async (params = '') => {
-    const resp = await useFetch(`invoiceSequences${params}`, [], 'GET')
-    await validateSession(resp)
-    const body = (await resp.json()) as Options | BodyCenters
-    if (resp.ok) {
-      return body.data
-    }
+    const body = await requestApi<IBody<IOptionsSelect[] | ICenters[]>>(
+      `invoiceSequences${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   saveCenters = async (data: ICenters) => {
     let service = 'centers'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `centers/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyCenters & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyCenters & IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
   }
 
   saveUsers = async (data: IUsers) => {
     let service = 'usuarios'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `usuarios/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyUsers & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyUsers & IRespSuccess>(service, { ...data }, method)
   }
 
   saveProfiles = async (data: IProfiles) => {
     let service = 'perfiles'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `perfiles/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyProfiles & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyProfiles & IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
   }
 
   saveBanksAccount = async (data: IBanksAccount) => {
     let service = 'bankAccounts'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `bankAccounts/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyProfiles & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyProfiles & IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
   }
 
   saveRoomsType = async (data: IRoomType) => {
     let service = 'tipohabitacion'
-    let method = 'POST'
+    let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
       service = `tipohabitacion/${data.key}`
       method = 'PATCH'
     }
-    const resp = await useFetch(service, { ...data }, method)
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyTypeRooms & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyTypeRooms & IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
   }
 
   deleteCenter = async (id: number) => {
-    const resp = await useFetch(`centers/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyCenters & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyCenters & IRespSuccess>(
+      `centers/${id}`,
+      {},
+      'DELETE'
+    )
   }
 
   deleteUser = async (id: number) => {
-    const resp = await useFetch(`usuarios/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyCenters & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyCenters & IRespSuccess>(
+      `usuarios/${id}`,
+      {},
+      'DELETE'
+    )
   }
 
   deleteProfiles = async (id: number) => {
-    const resp = await useFetch(`perfiles/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyProfiles & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyProfiles & IRespSuccess>(
+      `perfiles/${id}`,
+      {},
+      'DELETE'
+    )
   }
 
   deleteTypeRoom = async (id: number) => {
-    const resp = await useFetch(`tipohabitacion/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyTypeRooms & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyTypeRooms & IRespSuccess>(
+      `tipohabitacion/${id}`,
+      {},
+      'DELETE'
+    )
   }
 
   deleteBanksAccounts = async (id: number) => {
-    const resp = await useFetch(`bankAccounts/${id}`, {}, 'DELETE')
-    await validateSession(resp)
-    const body = (await resp.json()) as BodyBanksAccounts & IRespSuccess
-    if (resp.ok) {
-      return body
-    }
+    return requestApi<BodyBanksAccounts & IRespSuccess>(
+      `bankAccounts/${id}`,
+      {},
+      'DELETE'
+    )
   }
 }
 

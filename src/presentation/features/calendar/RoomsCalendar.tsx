@@ -11,7 +11,10 @@ import {ProgressBar} from 'primereact/progressbar'
 import {useContainer} from '../../hooks/useContainer'
 import {useUser} from '../../hooks/useUser'
 import {createParamsUrl} from '../../../core/shared/utils/utils'
-import type { IBedrooms } from '../../../core/shared/types/data'
+import type {
+  IBedrooms,
+  ICalendarReservation
+} from '../../../core/shared/types/data'
 
 import {DAY_NAMES, LEGEND_COLORS, MONTH_NAMES, VISIBLE_DAYS} from '../../../core/shared/utils/constants'
 import {RoomGridRow} from './RoomGridRow'
@@ -120,7 +123,7 @@ export const RoomsCalendar = () => {
         }))
       )
       setReservations(
-        (bookingsData ?? []).map((b: any) => ({
+        bookingsData.map((b: ICalendarReservation) => ({
           booking_id: b.id,
           room_id: b.room_id ?? 0,
           customer: b.customer,

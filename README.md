@@ -1,77 +1,78 @@
-# React + TypeScript + Vite
+# Hotel Management
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SPA para la gestión hotelera construida con React, TypeScript y Vite. Se conecta a una API independiente mediante cookies de sesión.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + TypeScript
+- Vite
+- Zustand para estado global
+- Formik + Yup para formularios y validación
+- PrimeReact + Tailwind CSS para la interfaz
+- Day.js para fechas
 
-## React Compiler
+## Requisitos
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- Node.js compatible con las dependencias del proyecto
+- pnpm
+- API de backend disponible localmente o configurada mediante variables de entorno
 
-Note: This will impact Vite dev & build performances.
+## Configuración
 
-## Expanding the ESLint configuration
+El proyecto lee la URL de la API desde `.env`:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```env
+VITE_URL_API='http://localhost:3000'
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+No agregue secretos de producción a este archivo. La autenticación usa cookies, por lo que el backend debe permitir el origen del frontend y configurar sus cookies de forma segura.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Comandos
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+pnpm install
+pnpm dev
+pnpm build
+pnpm lint
+pnpm preview
 ```
+
+`pnpm build` ejecuta primero la comprobación de TypeScript y después genera la compilación de producción. Para desarrollo use `pnpm dev`; el script `watch` no se recomienda porque no llega a iniciar Vite.
+
+## Arquitectura
+
+El código fuente sigue una separación por capas:
+
+```text
+src/
+├── app/             # Punto de entrada, providers y rutas
+├── core/            # Contratos de repositorios, tipos y utilidades compartidas
+├── infrastructure/  # API HTTP, adaptadores, stores de Zustand y DI
+└── presentation/    # Componentes React, features, formularios y layouts
+```
+
+Los componentes acceden a los repositorios a través de `useContainer()`. Las implementaciones concretas se registran en `src/infrastructure/di/container.ts`.
+
+### API y sesión
+
+- Las solicitudes pasan por `requestHttp()` y conservan `credentials: 'include'`.
+- Todos los endpoints usan validación de sesión ante respuestas 401 y normalizan errores de red, servidor o respuestas inválidas como `ApiError`.
+- Las respuestas HTTP no exitosas se propagan al consumidor para mostrar un mensaje útil, en lugar de convertirse silenciosamente en `undefined`.
+- La verificación y renovación de sesión se mantienen separadas para permitir el flujo de `verifySession()` seguido de `refreshToken()`.
+
+La protección CSRF debe configurarse y validarse en el backend según la política de cookies usada en despliegue.
+
+## Calidad
+
+Actualmente no hay framework de pruebas configurado. Antes de desplegar cambios, ejecute al menos:
+
+```bash
+pnpm lint
+pnpm build
+```
+
+Como siguiente paso recomendado, incorpore pruebas unitarias para utilidades, repositorios y flujos críticos de reservas, anticipos y facturación, además de una pipeline de integración continua que ejecute las validaciones anteriores.
+
+## Más información
+
+Consulte [src/ARCHITECTURE.md](src/ARCHITECTURE.md) para detalles de las capas y las convenciones de inyección de dependencias.

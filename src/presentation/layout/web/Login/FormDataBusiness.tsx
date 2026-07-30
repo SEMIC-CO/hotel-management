@@ -34,13 +34,33 @@ export const FormDataBusiness = React.forwardRef<
   const [cities, setCities] = useState<IOptionsSelect[]>([])
 
   useEffect(() => {
-    authRepository.getCountries().then((resp) => {
-      typeof resp.data !== 'undefined' && setCountries(resp.data)
-    })
-    authRepository.getCities().then((resp) => {
-      typeof resp.data !== 'undefined' && setCities(resp.data)
-    })
-  }, [])
+    let isMounted = true
+
+    const loadLocations = async () => {
+      try {
+        const [countriesResponse, citiesResponse] = await Promise.all([
+          authRepository.getCountries(),
+          authRepository.getCities()
+        ])
+
+        if (!isMounted) return
+
+        setCountries(countriesResponse.data ?? [])
+        setCities(citiesResponse.data ?? [])
+      } catch {
+        if (isMounted) {
+          setCountries([])
+          setCities([])
+        }
+      }
+    }
+
+    void loadLocations()
+
+    return () => {
+      isMounted = false
+    }
+  }, [authRepository])
 
   return (
     <>

@@ -18,6 +18,7 @@ import {createParamsUrl} from '../../../core/shared/utils/utils'
 import Loading from '../../components/ui/UX/Loading'
 import type { IColumns } from '../../../core/shared/types/datalist'
 import type { FormikProps } from 'formik'
+import { getApiErrorMessage } from '../../../infrastructure/api/client/httpClient'
 
 interface AddCustomersRoomsProps extends IShow {
   rooms: IOptionsSelect[]
@@ -153,34 +154,44 @@ export const AddCustomersRooms = ({
       no_document: value,
       company_id: user.company_id
     })
-    customerRepository.getCustomerSearch(params).then((resp) => {
-      setLoading(false)
-      const customer = resp ?? []
-      if (customer.length > 0) {
-        updateState({
-          customer_id: customer[0].customer_id,
-          no_document: customer[0].no_document,
-          document_type: customer[0].document_type,
-          names: customer[0].names,
-          surnames: customer[0].surnames,
-          cell_phone: customer[0].cell_phone,
-          cell_phone_emergency: customer[0].cell_phone_emergency,
-          birthdate: customer[0].birthdate
-        })
-      } else {
-        updateState({
-          customer_id: '',
-          no_document: value,
-          document_type: '',
-          names: '',
-          surnames: '',
-          email: '',
-          cell_phone: '',
-          cell_phone_emergency: '',
-          birthdate: ''
-        })
-      }
-    })
+    customerRepository
+      .getCustomerSearch(params)
+      .then((resp) => {
+        const customer = resp ?? []
+        if (customer.length > 0) {
+          updateState({
+            customer_id: customer[0].customer_id,
+            no_document: customer[0].no_document,
+            document_type: customer[0].document_type,
+            names: customer[0].names,
+            surnames: customer[0].surnames,
+            cell_phone: customer[0].cell_phone,
+            cell_phone_emergency: customer[0].cell_phone_emergency,
+            birthdate: customer[0].birthdate
+          })
+        } else {
+          updateState({
+            customer_id: '',
+            no_document: value,
+            document_type: '',
+            names: '',
+            surnames: '',
+            email: '',
+            cell_phone: '',
+            cell_phone_emergency: '',
+            birthdate: ''
+          })
+        }
+      })
+      .catch((error) => {
+        showToast(
+          getApiErrorMessage(error, 'No se pudo consultar el huésped.'),
+          'error'
+        )
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   const bodyTemplateActions = (rowData: any) => {

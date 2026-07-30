@@ -1,7 +1,9 @@
 import type { IAuthRepository } from '../../../core/domain/repositories'
 import type { IAuth, IRegister, ISession } from '../../../core/shared/types/data'
 import type { IOptionsSelect } from '../../../core/shared/types/forms'
-import {useFetch} from '../client/httpClient'
+import { validateSession } from '../../auth/sessionManager'
+import { requestApi } from '../client/apiRequest'
+import { readApiResponse, requestHttp } from '../client/httpClient'
 
 interface Options {
   data?: IOptionsSelect[]
@@ -13,56 +15,43 @@ interface Body {
 }
 class LoginServer implements IAuthRepository {
   authLogin = async (data: IAuth) => {
-    const resp = await useFetch('auth/login/', { ...data }, 'POST')
-    const body = await resp.json() as ISession
-    return body
+    return requestApi<ISession>('auth/login/', { ...data }, 'POST')
   }
 
   authLogout = async () => {
-    const resp = await useFetch('auth/logout', {}, 'POST')
-    const body = await resp.json() as ISession
-    return body
+    return requestApi<ISession>('auth/logout', {}, 'POST')
   }
 
   verifySession = async () => {
-    const resp = await useFetch('auth/verify-sesion', {}, 'POST')
+    const resp = await requestHttp('auth/verify-sesion', {}, 'POST')
+    await validateSession(resp)
 
     if (resp.status === 401) {
       return false
     }
-    const body = await resp.json() as ISession
-    return body
+    return readApiResponse<ISession>(resp)
   }
 
   refreshToken = async () => {
-    const resp = await useFetch('auth/refresh-token', {}, 'POST')
+    const resp = await requestHttp('auth/refresh-token', {}, 'POST')
+    await validateSession(resp)
 
     if (resp.status === 401) {
       return false
     }
-    const body = await resp.json() as ISession
-    return body
+    return readApiResponse<ISession>(resp)
   }
 
   registerCustomer = async (data: IRegister) => {
-    const resp = await useFetch('company', { ...data }, 'POST')
-    if (resp.status === 401) {
-      return false
-    }
-    const body = await resp.json() as Body
-    return body
+    return requestApi<Body>('company', { ...data }, 'POST')
   }
 
   getCountries = async () => {
-    const resp = await useFetch('location/paises/?select=true', {}, 'GET')
-    const body = await resp.json() as Options
-    return body
+    return requestApi<Options>('location/paises/?select=true', {}, 'GET')
   }
 
   getCities = async () => {
-    const resp = await useFetch('location/cities/?select=true', {}, 'GET')
-    const body = await resp.json() as Options
-    return body
+    return requestApi<Options>('location/cities/?select=true', {}, 'GET')
   }
 }
 
