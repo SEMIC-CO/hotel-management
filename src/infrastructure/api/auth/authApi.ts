@@ -24,7 +24,7 @@ class LoginServer implements IAuthRepository {
 
   verifySession = async () => {
     const resp = await requestHttp('auth/verify-sesion', {}, 'POST')
-    await validateSession(resp)
+    await validateSession(resp, false)
 
     if (resp.status === 401) {
       return false
@@ -34,7 +34,7 @@ class LoginServer implements IAuthRepository {
 
   refreshToken = async () => {
     const resp = await requestHttp('auth/refresh-token', {}, 'POST')
-    await validateSession(resp)
+    await validateSession(resp, false)
 
     if (resp.status === 401) {
       return false

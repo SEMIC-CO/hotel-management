@@ -11,7 +11,7 @@ import { useContainer } from '../../../hooks/useContainer'
 import { APP_ROUTES } from '../../../../core/shared/utils/constants'
 
 export const SignIn = () => {
-  const clientId = import.meta.env.VITE_CLIENT_ID_GOOGLE as string
+  const clientId = import.meta.env.VITE_CLIENT_ID_GOOGLE?.trim()
   const toastTopCenter = useRef<Toast>(null)
   const navigate = useNavigate()
   const update = useSessionStore((state) => state.updateState)
@@ -99,14 +99,16 @@ export const SignIn = () => {
                 size='small'
               />
             </div>
-            <div className='w-full'>
-              <GoogleOAuthProvider clientId={clientId}>
-                <GoogleLogin
-                  onSuccess={onSuccess}
-                  onError={onError}
-                />
-              </GoogleOAuthProvider>
-            </div>
+            {clientId && (
+              <div className='w-full'>
+                <GoogleOAuthProvider clientId={clientId}>
+                  <GoogleLogin
+                    onSuccess={onSuccess}
+                    onError={onError}
+                  />
+                </GoogleOAuthProvider>
+              </div>
+            )}
             <div className='w-full'>
               <a
                 className='text-blue-400 font-semibold'
