@@ -81,7 +81,7 @@ export const SignIn = () => {
             </div>
             <div className='p-float-label mb-5 w-[100%!important]'>
               <Password
-                className='p-inputtext-sm w-[100%!important]'
+                className='p-inputtext-sm text-password w-[100%!important]'
                 id='password'
                 name='password'
                 value={password}

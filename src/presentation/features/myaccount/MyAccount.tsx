@@ -6,12 +6,6 @@ import { FormUpdatePassword } from './FormUpdatePassword'
 
 export const MyAccount = () => {
   const user = useUser()
-  console.log('MyAccount user', user)
-  // const handleSave = () => {
-  //   console.log('handleSave')
-  //   // Simulate API call
-  // }
-
   return (
     <section className='flex flex-row gap-2 text-left'>
       <Card>

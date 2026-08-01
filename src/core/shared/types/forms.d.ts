@@ -86,7 +86,7 @@ export interface FormProps {
   title?: string
   width?: string
   fields: IField[]
-  handleSave: (dataForm: any, form?: FormikHelpers<any>) => void
+  handleSave: (dataForm: any, formik?: FormikHelpers<any>) => void
   validationSchema?: yup.ObjectSchema<any>
   useStoreForm: UseBoundStore<StoreApi<IStore>>
   classForm?: string
@@ -106,7 +106,7 @@ export interface IStore<T extends Record<string, any> = Record<string, any>> {
   resetState: (values?: T) => void
 }
 
-interface IPropsSave<T = Record<string, any>> {
+export interface IPropsSave<T = Record<string, any>> {
   values: T & IConstants
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }

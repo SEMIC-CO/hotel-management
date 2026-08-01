@@ -171,6 +171,26 @@ class SettingsService implements ISettingsRepository {
     )
   }
 
+  updatePassword = async (id: number, data: {password: string}) => {
+    const service = `usuarios/change-password/${id}`
+    const method: HttpMethod = 'PATCH'
+    return requestApi<IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
+  }
+
+  verifyPassword = async (data: { id: number; password: string }) => {
+    const service = 'usuarios/verify-password'
+    const method: HttpMethod = 'POST'
+    return requestApi<IRespSuccess>(
+      service,
+      { ...data },
+      method
+    )
+  }
+
   deleteCenter = async (id: number) => {
     return requestApi<BodyCenters & IRespSuccess>(
       `centers/${id}`,

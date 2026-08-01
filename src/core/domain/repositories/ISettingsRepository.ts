@@ -16,6 +16,8 @@ export interface ISettingsRepository {
   saveProfiles: (data: IProfiles) => Promise<BodyProfiles & IRespSuccess>
   saveBanksAccount: (data: IBanksAccount) => Promise<BodyProfiles & IRespSuccess>
   saveRoomsType: (data: IRoomType) => Promise<BodyTypeRooms & IRespSuccess>
+  verifyPassword: (data: { id: number; password: string }) => Promise<IRespSuccess>
+  updatePassword: (id: number, data: {password: string}) => Promise<IRespSuccess>
   deleteCenter: (id: number) => Promise<BodyCenters & IRespSuccess>
   deleteUser: (id: number) => Promise<BodyCenters & IRespSuccess>
   deleteProfiles: (id: number) => Promise<BodyProfiles & IRespSuccess>

@@ -59,20 +59,20 @@
 .top-field-web::inactive {
   top: 28%;
 }
-#password > .p-icon-field {
+.text-password > .p-icon-field {
   width: 100%;
 }
 .p-password-input {
   width: 100%;
 }
-#password > .p-icon-field {
+.text-password > .p-icon-field {
   /* display: flex;
   align-items: center; */
 }
-#password > .p-icon-field > span > .p-icon {
+.text-password > .p-icon-field > span > .p-icon {
   display: block;
 }
-#password > .p-icon-field > .p-input-icon {
+.text-password > .p-icon-field > .p-input-icon {
   margin-top: -0.45rem;
 }
 .p-inputotp-input {

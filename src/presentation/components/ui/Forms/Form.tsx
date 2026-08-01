@@ -14,6 +14,7 @@ import {SearchField} from '../SearchField'
 import {OptionButton} from '../OptionButton'
 import {useUser} from '../../../hooks/useUser'
 import { normalizeInitialValues } from '../../../../core/shared/utils/form'
+import { TextPassword } from '../TextPassword'
 
 export interface IHandleSaveForm {
   dataForm: any
@@ -81,6 +82,13 @@ export const Form = ({
       case 'text':
         return (
           <TextField
+            key={field.name}
+            {...field}
+          />
+        )
+      case 'password':
+        return (
+          <TextPassword
             key={field.name}
             {...field}
           />

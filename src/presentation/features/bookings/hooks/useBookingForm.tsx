@@ -380,6 +380,7 @@ export const useBookingForm = ({
             formik.setFieldValue('cell_phone', customer[0].cell_phone)
             formik.setFieldValue('cell_phone_emergency', customer[0].cell_phone_emergency)
             formik.setFieldValue('birthdate', customer[0].birthdate)
+            formik.setFieldValue('email', customer[0].email)
           } else {
             formik.setFieldValue('customer_id', 0)
             formik.setFieldValue('no_document', value)
@@ -389,6 +390,7 @@ export const useBookingForm = ({
             formik.setFieldValue('cell_phone', '')
             formik.setFieldValue('cell_phone_emergency', '')
             formik.setFieldValue('birthdate', '')
+            formik.setFieldValue('email', '')
           }
         })
         .catch((error) => {
