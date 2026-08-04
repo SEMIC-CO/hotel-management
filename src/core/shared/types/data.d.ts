@@ -72,6 +72,7 @@ export interface IBookings {
   observations?: string
 }
 export interface IOtherService {
+  key?: number | string
   id?: string
   booking_id: string | number
   service_date: string

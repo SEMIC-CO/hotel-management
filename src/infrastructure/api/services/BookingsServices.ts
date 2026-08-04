@@ -2,6 +2,7 @@ import type { IBookingRepository } from '../../../core/domain/repositories'
 import type {
   IBookings,
   ICalendarReservation,
+  IOtherService,
   IOtherServicesPayload
 } from '../../../core/shared/types/data'
 import type { IRespSuccess } from '../../../core/shared/types/forms'
@@ -16,7 +17,7 @@ interface BodyRoom<T> {
   data?: T
 }
 interface BodyOtherServices {
-  data?: unknown
+  data?: IOtherService[]
 }
 
 class BookingsServices implements IBookingRepository {
@@ -62,7 +63,24 @@ class BookingsServices implements IBookingRepository {
     return requestApi<Body & IRespSuccess>(service, { ...data }, method)
   }
 
-  saveAdvance = async (data: IBookings) => {
+
+  confirmReservation = async (booking_id: number) => {
+    return requestApi<IRespSuccess>(
+      `reservations/confirm/${booking_id}`,
+      { state: BOOKING_STATE.RESERVADA },
+      'PATCH'
+    )
+  }
+
+  cancelReservation = async (booking_id: number) => {
+    return requestApi<IRespSuccess>(
+      `reservations/cancel/${booking_id}`,
+      { state: BOOKING_STATE.CANCELADA },
+      'PATCH'
+    )
+  }
+
+   saveAdvance = async (data: IBookings) => {
     let service = 'advancePayments'
     let method: HttpMethod = 'POST'
     if (typeof data.key !== 'undefined') {
@@ -70,6 +88,15 @@ class BookingsServices implements IBookingRepository {
       method = 'PATCH'
     }
     return requestApi<Body & IRespSuccess>(service, { ...data }, method)
+  }
+
+  getAdvances = async (params = '') => {
+    const body = await requestApi<Body & IRespSuccess>(
+      `advancePayments${params}`,
+      [],
+      'GET'
+    )
+    return body.data ?? []
   }
 
   saveOtherServices = async (data: IOtherServicesPayload) => {
@@ -86,20 +113,15 @@ class BookingsServices implements IBookingRepository {
     )
   }
 
-  confirmReservation = async (booking_id: number) => {
-    return requestApi<IRespSuccess>(
-      `reservations/confirm/${booking_id}`,
-      { state: BOOKING_STATE.RESERVADA },
-      'PATCH'
+  getOtherServices = async (params = '') => {
+    console.log('params', params);
+    
+    const body = await requestApi<BodyOtherServices & IRespSuccess>(
+      `otherServices${params}`,
+      [],
+      'GET'
     )
-  }
-
-  cancelReservation = async (booking_id: number) => {
-    return requestApi<IRespSuccess>(
-      `reservations/cancel/${booking_id}`,
-      { state: BOOKING_STATE.CANCELADA },
-      'PATCH'
-    )
+    return body.data ?? [] as IOtherService[]
   }
 }
 

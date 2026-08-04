@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
 import { useFormikContext, type FormikContextType } from "formik";
@@ -7,15 +7,17 @@ import type {
   IPropsSave,
   IShow,
 } from "../../../../core/shared/types/forms";
-import type { IOtherServicesPayload } from "../../../../core/shared/types/data";
+import type { IOtherService, IOtherServicesPayload } from "../../../../core/shared/types/data";
 import { useToast } from "../../../hooks/useToast";
 import { useContainer } from "../../../hooks/useContainer";
-import { useOtherServicesStore, type OtherServicesFormValues } from "../../../../infrastructure/stores/otherServices.store";
+import {
+  useOtherServicesStore,
+  type OtherServicesFormValues,
+} from "../../../../infrastructure/stores/otherServices.store";
 import { Button } from "primereact/button";
 import { List } from "../../../components/ui/DataTable/List";
 import type { IColumns } from "../../../../core/shared/types/datalist";
 import { getApiErrorMessage } from "../../../../infrastructure/api/client/httpClient";
-
 
 type OtherServiceRow = OtherServicesFormValues & { key: number };
 
@@ -31,11 +33,11 @@ const AddServiceButton = ({
   const formik = useFormikContext<OtherServicesFormValues>();
   return (
     <Button
-    type="button"
-    icon={editing ? "pi pi-check" : "pi pi-plus"}
-    label={editing ? "Actualizar" : "Agregar"}
-    aria-label={editing ? "Actualizar servicio" : "Agregar servicio"}
-    onClick={() => onAdd(formik)}
+      type="button"
+      icon={editing ? "pi pi-check" : "pi pi-plus"}
+      label={editing ? "Actualizar" : "Agregar"}
+      aria-label={editing ? "Actualizar servicio" : "Agregar servicio"}
+      onClick={() => onAdd(formik)}
     />
   );
 };
@@ -53,17 +55,17 @@ const ServiceActions = ({
   onDelete: (rowData: OtherServiceRow) => void;
 }) => {
   const formik = useFormikContext<OtherServicesFormValues>();
-  
+
   return (
     <div className="flex gap-5 justify-content-center">
       <i
         className="pi pi-pencil cursor-pointer"
         onClick={() => onEdit(rowData, formik)}
-        />
+      />
       <i
         className="pi pi-trash cursor-pointer"
         onClick={() => onDelete(rowData)}
-        />
+      />
     </div>
   );
 };
@@ -76,21 +78,45 @@ export const useOtherServicesForm = ({
 
   const { toast, showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [services, setServices] = useState<OtherServiceRow[]>([]);
-  const [editingServiceKey, setEditingServiceKey] = useState<number | null>(null);
+  const [services, setServices] = useState<OtherServiceRow[] | IOtherService[] >([]);
+  const [editingServiceKey, setEditingServiceKey] = useState<number | null>(
+    null,
+  );
 
   const { resetState } = useOtherServicesStore();
-  const booking_id = useOtherServicesStore(state => state.values.booking_id);
+  const booking_id = useOtherServicesStore((state) => state.values.booking_id);
+  
+  useEffect(() => {
+    if (!booking_id) return;
+    bookingRepository
+      .getOtherServices(`?booking_id=${booking_id}`)
+      .then((resp) => {
+        if (!resp) {
+          showToast("No se pudieron cargar los servicios.", "error");
+          return;
+        }
+        setServices(resp ?? []);
+      })
+      .catch((error) => {
+        showToast(
+          getApiErrorMessage(error, "No se pudieron cargar los servicios."),
+          "error",
+        );
+      });
+  }, [booking_id]);
 
   // El Guardar del Form llega aqui sin validacion de campos: los valores
   // del formulario llegan vacios, la data a guardar es la lista `services`
   const handleSave = useCallback(
-    ({ values, setLoading: setFormLoading }: IPropsSave<OtherServicesFormValues>) => {
+    ({
+      values,
+      setLoading: setFormLoading,
+    }: IPropsSave<OtherServicesFormValues>) => {
       if (services.length === 0) {
         showToast("Debe agregar al menos un servicio", "error");
         return;
       }
-      const {center_id, company_id, created_by} = values;
+      const { center_id, company_id, created_by } = values;
       const data: IOtherServicesPayload = {
         center_id,
         company_id,
@@ -98,6 +124,7 @@ export const useOtherServicesForm = ({
         booking_id,
         other_services: services,
       };
+      console.log("handleSave data", data);
 
       setFormLoading(true);
       setLoading(true);
@@ -111,21 +138,24 @@ export const useOtherServicesForm = ({
             setShowForm(false);
             onActionForm?.(resp.data);
             showToast(
-              resp.message ?? 'Se registraron los servicios correctamente!',
-              'success',
+              resp.message ?? "Se registraron los servicios correctamente!",
+              "success",
             );
             return;
           }
 
           showToast(
-            `Error al registrar los servicios, ${resp.message ?? 'intente nuevamente'}`,
-            'error',
+            `Error al registrar los servicios, ${resp.message ?? "intente nuevamente"}`,
+            "error",
           );
         })
         .catch((error) => {
           showToast(
-            getApiErrorMessage(error, 'No se pudieron registrar los servicios.'),
-            'error',
+            getApiErrorMessage(
+              error,
+              "No se pudieron registrar los servicios.",
+            ),
+            "error",
           );
         })
         .finally(() => {
@@ -169,11 +199,7 @@ export const useOtherServicesForm = ({
 
   const bodyTemplateActions = (rowData: OtherServiceRow) => {
     return (
-      <ServiceActions
-        rowData={rowData}
-        onEdit={editRow}
-        onDelete={deleteRow}
-      />
+      <ServiceActions rowData={rowData} onEdit={editRow} onDelete={deleteRow} />
     );
   };
 
@@ -196,10 +222,13 @@ export const useOtherServicesForm = ({
     >,
   ) => {
     if (!formik) return;
-
+    
     const { quantity, unit_value: unitValue } = formik.values;
-    if (Number.isFinite(quantity) && Number.isFinite(unitValue)) {
-      formik.setFieldValue("total_value", quantity * unitValue);
+    
+    console.log("calculateTotalValue", formik.values);
+    
+    if (Number.isFinite(Number(quantity)) && Number.isFinite(unitValue)) {
+      formik.setFieldValue("total_value", Number(quantity) * unitValue);
     }
   };
 
@@ -239,7 +268,6 @@ export const useOtherServicesForm = ({
       type: "textArea",
     },
   ];
-
 
   // Recibe el formik desde AddServiceButton: valida con el validationSchema
   // (Yup), agrega los valores al listado y limpia para el siguiente servicio.
@@ -317,9 +345,15 @@ export const useOtherServicesForm = ({
   const validationSchema = Yup.object({
     service_date: Yup.string().required("Requerido"),
     service_name: Yup.string().required("Requerido"),
-    quantity: Yup.number().moreThan(0, "Debe ser mayor a 0").required("Requerido"),
-    unit_value: Yup.number().moreThan(0, "Debe ser mayor a 0").required("Requerido"),
-    total_value: Yup.number().moreThan(0, "Debe ser mayor a 0").required("Requerido"),
+    quantity: Yup.number()
+      .moreThan(0, "Debe ser mayor a 0")
+      .required("Requerido"),
+    unit_value: Yup.number()
+      .moreThan(0, "Debe ser mayor a 0")
+      .required("Requerido"),
+    total_value: Yup.number()
+      .moreThan(0, "Debe ser mayor a 0")
+      .required("Requerido"),
     observations: Yup.string(),
   });
 
