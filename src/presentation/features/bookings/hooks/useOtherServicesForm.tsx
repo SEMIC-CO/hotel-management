@@ -95,6 +95,7 @@ export const useOtherServicesForm = ({
           showToast("No se pudieron cargar los servicios.", "error");
           return;
         }
+        console.log("getOtherServices resp", resp);
         setServices(resp ?? []);
       })
       .catch((error) => {
@@ -269,6 +270,7 @@ export const useOtherServicesForm = ({
     },
   ];
 
+
   // Recibe el formik desde AddServiceButton: valida con el validationSchema
   // (Yup), agrega los valores al listado y limpia para el siguiente servicio.
   // El schema NO esta registrado en Formik (para que el boton Guardar no
@@ -363,5 +365,6 @@ export const useOtherServicesForm = ({
     handleSave,
     validationSchema,
     fields,
+    baseFields
   };
 };

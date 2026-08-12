@@ -20,12 +20,30 @@ export const createParamsUrl = (params: Record<string, string | number | boolean
 }
 
 export const formatCurrency = (value: number) => {
-  return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+  //  return Number(value).toLocaleString('es-CO', { style: 'currency', currency: 'USD' })
+  return Number(value)
+    .toLocaleString('es-CO',
+      {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+    .replace(/\u00A0/g, '')
 }
 
+// export const parseCurrency = (value: string): number => {
+//   if (!value) return 0
+//   const cleanValue = value.replace(/[$\s,]/g, '')
+//   const result = parseFloat(cleanValue)
+//   return isNaN(result) ? 0 : result
+// }
 export const parseCurrency = (value: string): number => {
   if (!value) return 0
-  const cleanValue = value.replace(/[$\s,]/g, '')
+  const cleanValue = value
+    .replace(/[$\s]/g, '')
+    .replace(/\./g, '')
+    .replace(',', '.')
   const result = parseFloat(cleanValue)
   return isNaN(result) ? 0 : result
 }

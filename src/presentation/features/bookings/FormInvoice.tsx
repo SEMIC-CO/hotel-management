@@ -9,6 +9,8 @@ import { RadioButton } from "primereact/radiobutton";
 import Loading from "../../components/ui/UX/Loading";
 import { formatCurrency } from "../../../core/shared/utils/utils";
 import { useInvoiceForm } from "./hooks/useInvoiceForm";
+import { useOtherServicesForm } from "./hooks/useOtherServicesForm";
+import type { IColumns } from "../../../core/shared/types/datalist";
 
 export const FormInvoice = ({
   onActionForm: _onActionForm,
@@ -16,6 +18,13 @@ export const FormInvoice = ({
   setShowForm,
 }: IShow) => {
   const form = useInvoiceForm({ setShowForm });
+
+  const { baseFields: fieldsOtherServices } = useOtherServicesForm({
+    setShowForm,
+  });
+  const columnsOtherServices: IColumns[] = fieldsOtherServices.filter(
+    ({ name }) => !["service_date", "observations"].includes(name),
+  );
 
   return (
     <>
@@ -72,15 +81,35 @@ export const FormInvoice = ({
               useStoreForm={useBookingStore}
               footer={
                 <section className="">
-                  <div>
-                    <h3 className="text-title-large font-bold">
-                      Detalles de factura
-                    </h3>
-                    <List
-                      data={form.rooms}
-                      columns={form.columns}
-                      size="small"
-                    />
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <h3 className="text-title-large font-bold">
+                        Detalles de factura
+                      </h3>
+                      <List
+                        data={form.rooms}
+                        columns={form.columns}
+                        size="small"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-title-large font-bold">
+                        Otros servicios
+                      </h3>
+                      <List
+                        data={form.services}
+                        columns={columnsOtherServices}
+                        size="small"
+                      />
+                    </div>
+                    {/* <div>
+                      <h3 className="text-title-large font-bold">Anticipos</h3>
+                      <List
+                        data={form.rooms}
+                        columns={form.columns}
+                        size="small"
+                      />
+                    </div> */}
                     <div className="text-center pt-5">
                       <Button
                         type="submit"
@@ -100,16 +129,16 @@ export const FormInvoice = ({
               Detalles de pago
             </h3>
             <div className="space-y-4 mb-8">
-              <div className="flex justify-between text-sm text-on-surface-variant">
+              {/* <div className="flex justify-between text-sm text-on-surface-variant">
                 <span>Impuestos (4%)</span>
                 <span className="font-medium text-on-surface">
                   {formatCurrency(form.valuesInvoice.taxes)}
                 </span>
-              </div>
+              </div> */}
               <div className="flex justify-between text-sm text-on-surface-variant">
                 <span>Valor anticipo</span>
                 <span className="font-medium text-on-surface">
-                  -{formatCurrency(form.valuesInvoice.taxes)}
+                  -{formatCurrency(form.valuesInvoice.advances)}
                 </span>
               </div>
               <div className="flex justify-between text-sm text-on-surface-variant">
@@ -133,7 +162,8 @@ export const FormInvoice = ({
                     {formatCurrency(
                       form.valuesInvoice.subtotal +
                         form.valuesInvoice.taxes +
-                        form.valuesInvoice.other_services,
+                        form.valuesInvoice.other_services -
+                        form.valuesInvoice.advances,
                     )}
                   </p>
                 </div>

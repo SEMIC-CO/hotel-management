@@ -24,7 +24,7 @@ const valuesBookings = {
   rooms_reservations: [] as IRoomsBookings[],
   total_rooms: 0,
   total_reservation: 0,
-  advance_payment_value: 0,
+  value_advance: 0,
   payment_type: '',
   bank: ''
 }

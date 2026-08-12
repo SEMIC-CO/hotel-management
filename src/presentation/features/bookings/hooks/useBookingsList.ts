@@ -42,6 +42,7 @@ export const useBookingsList = () => {
     bookingRepository
       .get(urlParams)
       .then((resp) => {
+        console.log("refreshList bookings resp", resp)
         setData(resp)
       })
       .catch((error) => {

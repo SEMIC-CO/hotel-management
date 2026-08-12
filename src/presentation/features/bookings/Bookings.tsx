@@ -23,12 +23,12 @@ export const Bookings = () => {
       },
       list.selectedRow?.state == BOOKING_STATE.INGRESO &&
       {
-        label: 'Facturar estadía',
+        label: 'Finalizar estadía',
         icon: 'pi pi-fw pi-print',
         command: () => list.onFormInvoice(list.selectedRow)
       },
       {
-        label: 'Agregar otros servicios',
+        label: 'Agregar servicios',
         icon: 'pi pi-fw pi-list',
         command: () => list.onFormOtherServices(list.selectedRow)
       },

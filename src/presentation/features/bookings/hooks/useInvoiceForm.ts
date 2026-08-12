@@ -1,17 +1,17 @@
-import {useCallback, useEffect, useMemo, useState} from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as Yup from 'yup'
 import type {
   IField,
   IOptionsSelect,
   IShow
 } from '../../../../core/shared/types/forms'
-import {useToast} from '../../../hooks/useToast'
-import {useContainer} from '../../../hooks/useContainer'
-import {useBookingStore} from '../../../../infrastructure/stores/booking.store'
-import {buildCustomerFields} from '../../customers/configCustomerFieldsMode'
+import { useToast } from '../../../hooks/useToast'
+import { useContainer } from '../../../hooks/useContainer'
+import { useBookingStore } from '../../../../infrastructure/stores/booking.store'
+import { buildCustomerFields } from '../../customers/configCustomerFieldsMode'
 import type { IColumns } from '../../../../core/shared/types/datalist'
-import {formatCurrency, parseCurrency} from '../../../../core/shared/utils/utils'
-import type { ICustomers } from '../../../../core/shared/types/data'
+import { formatCurrency, parseCurrency } from '../../../../core/shared/utils/utils'
+import type { ICustomers, IOtherService } from '../../../../core/shared/types/data'
 import { getApiErrorMessage } from '../../../../infrastructure/api/client/httpClient'
 
 export const useInvoiceForm = ({
@@ -24,9 +24,11 @@ export const useInvoiceForm = ({
   const [guests, setGuests] = useState<ICustomers[]>([])
   const [holders, setHolders] = useState([])
   const [rooms, setRooms] = useState([])
+  const [services, setServices] = useState<IOtherService[]>([])
   const [valuesInvoice, setValuesInvoice] = useState({
     subtotal: 0,
     taxes: 0,
+    advances: 0,
     other_services: 0
   })
   const [invoiceTo, setInvoiceTo] = useState('Persona')
@@ -35,13 +37,32 @@ export const useInvoiceForm = ({
   const valueState = useBookingStore((state) => state.values)
   const updateState = useBookingStore((state) => state.updateState)
 
+
   const fetchData = useCallback(async () => {
     try {
-      const respListRooms = await bookingRepository.getDataEditBookings<any>(
-        `?booking_id=${valueState.booking_id}`
-      )
+
+      const [otherServices, respListRooms] = await Promise.all([
+        bookingRepository.getOtherServices(`?booking_id=${valueState.booking_id}`),
+        bookingRepository.getDataEditBookings<any>(`?booking_id=${valueState.booking_id}`)
+      ])
+
+
+      setServices(otherServices.map((service: any) => ({
+        ...service,
+        unit_value: formatCurrency(service.unit_value),
+        total_value: formatCurrency(service.total_value)
+      })))
+
+      const totalOtherServices: number = otherServices.reduce((acumulador: number, service: any) => {
+        return acumulador + service.total_value
+      }, 0)
 
       const roomsReservations = respListRooms?.rooms_reservations ?? []
+
+      console.log("roomsReservations invoice", roomsReservations);
+      console.log("otherServices invoice", otherServices);
+      console.log("valueState.value_advance  invoice", valueState.value_advance);
+
 
       const listRooms = roomsReservations.map((room: any) => ({
         key: room.rooms_reservations_id,
@@ -58,7 +79,12 @@ export const useInvoiceForm = ({
         return acumulador + parseCurrency(room.total)
       }, 0)
 
-      setValuesInvoice((prev) => ({ ...prev, subtotal: total }))
+      setValuesInvoice((prev) => ({
+        ...prev,
+        advances: valueState.value_advance ?? 0,
+        subtotal: total,
+        other_services: totalOtherServices,
+      }))
 
       const listGuest = roomsReservations.flatMap(
         (room: any) => room.guests_rooms ?? []
@@ -194,6 +220,8 @@ export const useInvoiceForm = ({
     return baseField
   }, [holders, invoiceTo])
 
+
+
   const handleSave = useCallback(
     async (data: any) => {
       const { values, setLoading } = data
@@ -222,6 +250,7 @@ export const useInvoiceForm = ({
         payment_method: paymentMethod,
         subtotal: valuesInvoice.subtotal,
         taxes: valuesInvoice.taxes,
+        advances: valuesInvoice.advances,
         other_services: valuesInvoice.other_services,
         total:
           valuesInvoice.subtotal +
@@ -295,6 +324,7 @@ export const useInvoiceForm = ({
     validationSchema,
     handleSave,
     handleSelectInvoiceTo,
-    close
+    close,
+    services
   }
 }
