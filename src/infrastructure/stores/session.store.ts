@@ -4,7 +4,7 @@ import type { ISession } from '../../core/shared/types/data'
 
 const valuesSession: ISession = {
   isAuthenticated: false,
-  user: undefined
+  user: undefined,
 }
 
 export const useSessionStore = create<IStore<ISession>>()((set) => ({

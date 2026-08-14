@@ -119,7 +119,7 @@ export interface IAuth {
 }
 export interface ISession {
   isAuthenticated: boolean
-  user?: IUsers | undefined
+  user?: IUsers | undefined,
   message?: string
 }
 export interface IUserRegister {

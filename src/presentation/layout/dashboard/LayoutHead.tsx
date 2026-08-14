@@ -12,6 +12,7 @@ import { useContainer } from '../../hooks/useContainer'
 import { useToast } from '../../hooks/useToast'
 import { APP_ROUTES } from '../../../core/shared/utils/constants'
 import { getApiErrorMessage } from '../../../infrastructure/api/client/httpClient'
+import logo from '../../assets/logo.png'
 
 export const LayoutHead = () => {
   const navigate = useNavigate()
@@ -36,14 +37,12 @@ export const LayoutHead = () => {
   }
 
   const start = (
-    <div className='flex'>
+    <div className='flex items-center'>
       <figure>
         <img
           alt='logo'
-          src='https://primefaces.org/cdn/primereact/images/logo.png'
-          height='20'
-          width='40px'
-          className='mr-2'
+          src={logo}
+          className='mr-2 w-20 h-13 object-contain'
         />
       </figure>
       <div className='company-name'>
