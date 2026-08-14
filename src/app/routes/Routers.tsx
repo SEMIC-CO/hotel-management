@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from 'react-router-dom'
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom'
 import {Dashboard} from '../../presentation/layout/dashboard/Dashboard'
 import {Login} from '../../presentation/layout/web/Login'
 import {ProtectedRoutes} from './ProtectedRoutes'
@@ -7,6 +7,7 @@ import {useContainer} from '../../presentation/hooks/useContainer'
 import {useSessionStore} from '../../infrastructure/stores/session.store'
 import {useEffect, useState} from 'react'
 import {ProgressBar} from 'primereact/progressbar'
+import {APP_ROUTES} from '../../core/shared/utils/constants'
 
 export const Routers = () => {
   const [loading, setLoading] = useState(true)
@@ -62,6 +63,10 @@ export const Routers = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route
+          path='/'
+          element={<Navigate to={APP_ROUTES.LOGIN} replace />}
+        />
         <Route
           path='web/*'
           element={

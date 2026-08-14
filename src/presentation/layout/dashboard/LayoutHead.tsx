@@ -1,13 +1,11 @@
 import { Avatar } from 'primereact/avatar'
 import { Menubar } from 'primereact/menubar'
-import { Badge } from 'primereact/badge'
 import { Toast } from 'primereact/toast'
 import { useRef } from 'react'
 import { Menu } from 'primereact/menu'
 import { useNavigate } from 'react-router-dom'
 import { useSessionStore } from '../../../infrastructure/stores/session.store'
 import { useUser } from '../../hooks/useUser'
-import { ThemeToggle } from '../../providers/ThemeToggle'
 import { useContainer } from '../../hooks/useContainer'
 import { useToast } from '../../hooks/useToast'
 import { APP_ROUTES } from '../../../core/shared/utils/constants'
@@ -76,7 +74,7 @@ export const LayoutHead = () => {
 
   const end = (
     <div className='w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround'>
-      <ThemeToggle />
+      {/* <ThemeToggle />
       <Avatar
         className='p-overlay-badge bg-transparent'
         icon='pi pi-bell'
@@ -91,7 +89,7 @@ export const LayoutHead = () => {
         className='ml-5 bg-transparent'
         icon='pi pi-cog'
         size='normal'
-      />
+      /> */}
       <Menu
         className='text-sm'
         model={menuItems}

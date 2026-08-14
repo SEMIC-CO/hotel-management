@@ -85,3 +85,15 @@ export const ROOM_STATE_TAG: Record<string, { color: string; bg: string; label: 
   INGRESO: { color: 'text-blue-700', bg: 'bg-blue-100', label: 'OCUPADA' },
   EN_MANTENIMIENTO: { color: 'text-orange-700', bg: 'bg-orange-100', label: 'EN MANTENIMIENTO' },
 }
+
+/* ─── FullCalendar event colors (hex, per reservation state from the API) ─── */
+export const CALENDAR_EVENT_COLORS: Record<
+  string,
+  { background: string; border: string; text: string }
+> = {
+  CONFIRMADA: { background: '#3B5998', border: '#2f4683', text: '#ffffff' },
+  INHOUSE: { background: '#10B981', border: '#0b9e6b', text: '#ffffff' },
+  CHECKOUT_PENDIENTE: { background: '#0ea5e7', border: '#0b8fc9', text: '#ffffff' },
+  PAGADA: { background: '#64748B', border: '#52606d', text: '#ffffff' },
+  CANCELADA: { background: '#e03852', border: '#c72f48', text: '#ffffff' },
+}

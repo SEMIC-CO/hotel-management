@@ -1,5 +1,4 @@
 import {
-  ROOM_STATE_TAG,
   STATUS_COLORS,
   STATUS_TEXT_COLORS
 } from '../../../core/shared/utils/constants'
@@ -45,13 +44,14 @@ export const RoomGridRow = ({
 
   const isSameDay = (a: Dayjs, b: Dayjs) => a.isSame(b, 'day')
 
-  const stateTag = ROOM_STATE_TAG[
-    room.state.replace(' ', '_').toUpperCase()
-  ] ?? {
-    color: 'text-gray-700',
-    bg: 'bg-gray-100',
-    label: room.state
-  }
+  // const stateTag = ROOM_STATE_TAG[
+  //   // room.state.replace(' ', '_').toUpperCase()
+  //   'INGRESO'
+  // ] ?? {
+  //   color: 'text-gray-700',
+  //   bg: 'bg-gray-100',
+  //   label: room.state
+  // }
   // console.log('stateTag', stateTag)
 
   /* Build cells: skip cells covered by multi-day spans */
@@ -104,14 +104,14 @@ export const RoomGridRow = ({
   return (
     <tr className='hover:bg-gray-50 transition-colors'>
       <td className='sticky left-0 z-10 bg-white px-4 py-2 border-b border-gray-200'>
-        <div className='flex flex-col'>
+        <div className='flex flex-col text-left'>
           <span className='font-semibold text-sm text-gray-800'>
-            {room.type} {room.no_room}
+            {room.no_room}
           </span>
           <span
-            className={`mt-1 text-[10px] font-semibold px-2 py-0.5 rounded ${stateTag.bg} ${stateTag.color} w-fit uppercase`}
+            className={`mt-1 text-[10px] font-semibold px-2 py-0.5 rounded text-blue-700 bg-blue-100 w-fit uppercase`}
           >
-            {stateTag.label}
+            {room.type}
           </span>
         </div>
       </td>

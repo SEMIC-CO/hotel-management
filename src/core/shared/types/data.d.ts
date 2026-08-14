@@ -13,6 +13,7 @@ export interface IBedrooms {
   room_id: number
   state: string
   type: string
+  room_type_name: string
   key?: number | string
 }
 export interface IInvoices {
@@ -93,6 +94,7 @@ export interface IOtherServicesPayload {
 export interface ICalendarReservation {
   id: number
   room_id?: number
+  no_room?: string
   customer: string
   start: string
   end: string
