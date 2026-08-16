@@ -25,10 +25,11 @@ class LoginServer implements IAuthRepository {
   verifySession = async () => {
     const resp = await requestHttp('auth/verify-sesion', {}, 'POST')
     await validateSession(resp, false)
-
+    
     if (resp.status === 401) {
       return false
     }
+    console.log("verifySession", resp);
     return readApiResponse<ISession>(resp)
   }
 

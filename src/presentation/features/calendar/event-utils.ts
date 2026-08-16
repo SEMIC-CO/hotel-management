@@ -1,6 +1,6 @@
 import type { EventInput } from '@fullcalendar/core'
 
-let eventGuid = 0
+
 // let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
 
 export const INITIAL_EVENTS: EventInput[] = [
@@ -17,7 +17,7 @@ export const INITIAL_EVENTS: EventInput[] = [
     end: '2026-03-04'
   }
 ]
-
+let eventGuid = 0
 export function createEventId() {
   return String(eventGuid++)
 }

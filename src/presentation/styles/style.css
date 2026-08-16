@@ -7,7 +7,7 @@
   /* --primary-color: #316ff6 !important; */
   /* --primary-color: #3366F5 !important; */
   --primary-color: #3b82f6 !important;
-  --secondary-color: #2c3e50;
+  --secondary-color: #042152;
   --text-color: #333333;
   --text-color-second: #f1f1f1;
   --background-color: #fafafa;
@@ -267,3 +267,27 @@ div#popup_menu_right {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+/* ─── FullCalendar theme (app colors) ─── */
+/* .fc .fc-button-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.fc .fc-button-primary:not(:disabled):hover {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+}
+.fc .fc-button-primary:disabled {
+  background-color: var(--primary-color-light);
+  border-color: var(--primary-color-light);
+}
+.fc .fc-toolbar-title {
+  color: var(--primary-color);
+}
+.fc .fc-col-header-cell {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+.fc .fc-day-today {
+  background-color: rgba(14, 165, 233, 0.1);
+} */

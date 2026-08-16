@@ -56,44 +56,48 @@ export const STATUS_TEXT_COLORS: Record<string, string> = {
   PENDIENTE_CONFIRMAR: 'text-white',
   INGRESO: 'text-white',
   CANCELADA: 'text-white',
+  FINALIZADA: 'text-white',
 }
 
 /* ─── Status colours (matching reference image) ─── */
 export const STATUS_COLORS: Record<string, string> = {
   EN_MANTENIMIENTO: 'bg-[#3B5998]',          // azul-indigo oscuro (bloque sólido)
-  RESERVADA: 'bg-[#3B5998]',       // azul lavanda claro
-  PENDIENTE_CONFIRMAR: 'bg-[#0ea5e7]', // gris claro
+  RESERVADA: 'bg-[#3b82f6]',       // azul lavanda claro
+  PENDIENTE_CONFIRMAR: 'bg-[#64748B]', // gris claro
   INGRESO: 'bg-[#10B981]',           // verde esmeralda
   CANCELADA: 'bg-[#e03852]',          // mismo azul-indigo que Inhouse
+  FINALIZADA: 'bg-[#3B5998]',       // azul lavanda claro
 }
 
 
 export const LEGEND_COLORS: Record<string, string> = {
+  PENDIENTE_CONFIRMAR: 'bg-[#64748B]',
+  RESERVADA: 'bg-[#3b82f6]',
   EN_MANTENIMIENTO: 'bg-[#3B5998]',
-  RESERVADA: 'bg-[#3B5998]',
-  PENDIENTE_CONFIRMAR: 'bg-[#0ea5e7]',
-  // PENDIENTE_CONFIRMAR: 'bg-[#C4CDD5]',
   INGRESO: 'bg-[#10B981]',
   CANCELADA: 'bg-[#e03852]',
+  FINALIZADA: 'bg-[#64748B]',
 }
 
-export const ROOM_STATE_TAG: Record<string, { color: string; bg: string; label: string }> = {
-  DISPONIBLE: { color: 'text-green-700', bg: 'bg-green-100', label: 'DISPONIBLE' },
-  LIMPIA: { color: 'text-green-700', bg: 'bg-green-100', label: 'LIMPIA' },
-  PENDIENTE_CONFIRMAR: { color: 'text-red-700', bg: 'bg-red-100', label: 'PENDIENTE CONFIRMAR' },
-  RESERVADA: { color: 'text-blue-700', bg: 'bg-blue-100', label: 'RESERVADA' },
-  INGRESO: { color: 'text-blue-700', bg: 'bg-blue-100', label: 'OCUPADA' },
-  EN_MANTENIMIENTO: { color: 'text-orange-700', bg: 'bg-orange-100', label: 'EN MANTENIMIENTO' },
-}
+// export const ROOM_STATE_TAG: Record<string, { color: string; bg: string; label: string }> = {
+//   DISPONIBLE: { color: 'text-green-700', bg: 'bg-green-100', label: 'DISPONIBLE' },
+//   LIMPIA: { color: 'text-green-700', bg: 'bg-green-100', label: 'LIMPIA' },
+//   PENDIENTE_CONFIRMAR: { color: 'text-red-700', bg: 'bg-red-100', label: 'PENDIENTE CONFIRMAR' },
+//   RESERVADA: { color: 'text-blue-700', bg: 'bg-blue-100', label: 'RESERVADA' },
+//   INGRESO: { color: 'text-blue-700', bg: 'bg-blue-100', label: 'OCUPADA' },
+//   EN_MANTENIMIENTO: { color: 'text-orange-700', bg: 'bg-orange-100', label: 'EN MANTENIMIENTO' },
+//   FINALIZADA: { color: '#64748B', bg: '#52606d', label: '#ffffff' },
+// }
 
 /* ─── FullCalendar event colors (hex, per reservation state from the API) ─── */
 export const CALENDAR_EVENT_COLORS: Record<
   string,
   { background: string; border: string; text: string }
 > = {
-  CONFIRMADA: { background: '#3B5998', border: '#2f4683', text: '#ffffff' },
-  INHOUSE: { background: '#10B981', border: '#0b9e6b', text: '#ffffff' },
-  CHECKOUT_PENDIENTE: { background: '#0ea5e7', border: '#0b8fc9', text: '#ffffff' },
+  PENDIENTE_CONFIRMAR: { background: '#64748B', border: '#64748B', text: '#ffffff' },
+  RESERVADA: { background: '#3b82f6', border: '#3b82f6', text: '#ffffff' },
+  INGRESO: { background: '#10B981', border: '#0b9e6b', text: '#ffffff' },
   PAGADA: { background: '#64748B', border: '#52606d', text: '#ffffff' },
+  FINALIZADA: { background: '#3B5998', border: '#2f4683', text: '#ffffff' },
   CANCELADA: { background: '#e03852', border: '#c72f48', text: '#ffffff' },
 }

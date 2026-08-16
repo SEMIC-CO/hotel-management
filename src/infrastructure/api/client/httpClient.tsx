@@ -62,6 +62,7 @@ export const getApiErrorMessage = (
  */
 export const readApiResponse = async <T,>(response: Response): Promise<T> => {
   const responseText = await response.text()
+  
   let body: unknown
 
   if (responseText !== '') {

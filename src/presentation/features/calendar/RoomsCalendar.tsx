@@ -3,9 +3,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
 import { Tooltip } from "primereact/tooltip";
-import { Dialog } from "primereact/dialog";
 import { ProgressBar } from "primereact/progressbar";
 
 import { useContainer } from "../../hooks/useContainer";
@@ -23,6 +21,7 @@ import {
   VISIBLE_DAYS,
 } from "../../../core/shared/utils/constants";
 import { RoomGridRow } from "./RoomGridRow";
+import { InfoReservationCalendar } from "./InfoReservationCalendar";
 
 /* ─── Types ─── */
 interface RoomRow {
@@ -32,12 +31,13 @@ interface RoomRow {
   state: string; // DISPONIBLE | OCUPADA | MANTENIMIENTO
 }
 
-interface Reservation {
-  booking_id: number;
-  room_id: number;
+export interface Reservation {
+  booking_id?: number;
+  room_id?: number;
   customer: string;
   entry_date: string;
   exit_date: string;
+  observations?: string;
   status: string; // CONFIRMADA | INHOUSE | CHECKOUT_PENDIENTE | PAGADA
 }
 
@@ -97,6 +97,7 @@ export const RoomsCalendar = () => {
     const maintenance = rooms.filter((r) => r.state === "MANTENIMIENTO").length;
     const available = rooms.filter((r) => r.state === "DISPONIBLE").length;
     const occupancyPct = Math.round((occupied / total) * 100);
+    
     const pendingCleaning = rooms.filter(
       (r) => r.state === "SUCIA" || r.state === "LIMPIEZA",
     ).length;
@@ -152,6 +153,7 @@ export const RoomsCalendar = () => {
           customer: b.customer,
           entry_date: b.start,
           exit_date: b.end,
+          observations: b.observations ?? "",
           status: b.state ?? "CONFIRMADA",
         })),
       );
@@ -207,6 +209,7 @@ export const RoomsCalendar = () => {
     const entryDate = dayjs(res.entry_date.slice(0, 10));
     return entryDate.isSame(day, "day") || day.isSame(startDate, "day");
   };
+  
 
   /* ─── Render ─── */
   return (
@@ -373,33 +376,10 @@ export const RoomsCalendar = () => {
       </div>
 
       {/* Detail dialog */}
-      <Dialog
-        header="Detalle de Reserva"
-        visible={!!selectedRes}
-        onHide={() => setSelectedRes(null)}
-        style={{ width: "400px" }}
-      >
-        {selectedRes && (
-          <div className="flex flex-col gap-2 text-sm">
-            <p>
-              <strong>Cliente:</strong> {selectedRes.customer}
-            </p>
-            <p>
-              <strong>Entrada:</strong> {selectedRes.entry_date?.slice(0, 10)}
-            </p>
-            <p>
-              <strong>Salida:</strong> {selectedRes.exit_date?.slice(0, 10)}
-            </p>
-            <p>
-              <strong>Estado:</strong>{" "}
-              <Tag
-                value={selectedRes.status}
-                severity={getTagSeverity(selectedRes.status)}
-              />
-            </p>
-          </div>
-        )}
-      </Dialog>
+      <InfoReservationCalendar
+        selectedRes={selectedRes}
+        setSelectedRes={setSelectedRes}
+      />
     </div>
   );
 };
@@ -444,19 +424,4 @@ const LegendItem = ({ color, label }: { color: string; label: string }) => (
   </span>
 );
 
-const getTagSeverity = (
-  status: string,
-): "success" | "info" | "warning" | "danger" | null => {
-  switch (status) {
-    case "PAGADA":
-      return "success";
-    case "CONFIRMADA":
-      return "info";
-    case "PENDIENTE":
-      return "warning";
-    case "INHOUSE":
-      return null;
-    default:
-      return "info";
-  }
-};
+

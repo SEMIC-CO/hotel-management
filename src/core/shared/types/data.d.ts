@@ -99,6 +99,7 @@ export interface ICalendarReservation {
   start: string
   end: string
   state?: string
+  observations?: string
 }
 export interface IUsers {
   key?: number
@@ -110,6 +111,7 @@ export interface IUsers {
   username: string
   center_id: number
   company_id: number
+  company_name: string
   profile_id: number
   password: string
   type: string

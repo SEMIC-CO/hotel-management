@@ -18,6 +18,8 @@ export const LayoutHead = () => {
   const { authRepository } = useContainer()
   const { toast, showToast } = useToast()
   const user = useUser()
+  console.log(user);
+  
 
   const handleLogout = () => {
     authRepository
@@ -44,7 +46,7 @@ export const LayoutHead = () => {
         />
       </figure>
       <div className='company-name'>
-        <h2 className=''>Big Ben</h2>
+        <h2 className=''>{user.company_name}</h2>
       </div>
     </div>
   )

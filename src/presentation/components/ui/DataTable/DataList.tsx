@@ -69,16 +69,17 @@ export const DataList = ({
     overlayRef.current[field.length]?.toggle(e)
   }
 
-  const tagTemplate = (data: any[], field: string) => {
+  const tagTemplate = (data: any, field: string) => {
     return (
       <>
+      
         {Array.isArray(data) &&
           data.length > 0 &&
           data.map((item: any, index: number) => (
             <Tag
               severity='info'
               key={index}
-              className='mr-1 mb-1'
+              className='mr-1 mb-1 bg-[#3b82f6]'
             >
               {item[field]}
             </Tag>
@@ -87,7 +88,7 @@ export const DataList = ({
         {typeof data === 'string' && (
           <Tag
             severity='info'
-            className={`mr-1 mb-1 ${STATUS_COLORS[data]}`}
+            className={`mr-1 mb-1 ${STATUS_COLORS[data.replace(/\s+/g, '_').toUpperCase()] || 'bg-slate-400'}`}
             // style={{
             //   background: STATUS_COLORS[data] || '#e03852'
             // }}

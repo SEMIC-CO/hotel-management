@@ -59,3 +59,27 @@ h1 {
   box-shadow: 0px 2px 5px 2px rgba(227, 224, 227, 1); */
   /* box-shadow:  0px 4px 30px rgba(221, 224, 255, .54); */
 }
+
+/* ─── FullCalendar theme (app colors) ─── */
+.fc .fc-button-primary {
+  background-color: #3B5998;
+  border-color: #3B5998;
+}
+.fc .fc-button-primary:not(:disabled):hover {
+  background-color: #2f4683;
+  border-color: #2f4683;
+}
+.fc .fc-button-primary:disabled {
+  background-color: #a8b6d9;
+  border-color: #a8b6d9;
+}
+.fc .fc-toolbar-title {
+  color: #3B5998;
+}
+.fc .fc-col-header-cell {
+  background-color: #3B5998;
+  color: #fff;
+}
+.fc .fc-day-today {
+  background-color: rgba(14, 165, 233, 0.1);
+}
