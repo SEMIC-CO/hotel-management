@@ -4,7 +4,8 @@ import type {
   IBookingRepository,
   ICustomerRepository,
   IInvoiceRepository,
-  ISettingsRepository
+  ISettingsRepository,
+  IMyHotelRepository
 } from '../domain/repositories'
 
 export interface AppContainer {
@@ -14,4 +15,5 @@ export interface AppContainer {
   customerRepository: ICustomerRepository
   invoiceRepository: IInvoiceRepository
   settingsRepository: ISettingsRepository
+  myHotelRepository: IMyHotelRepository
 }

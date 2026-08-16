@@ -3,22 +3,27 @@ import { Card } from 'primereact/card'
 import { useEffect, useState } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import type { ICentersDashboard } from '../../../core/shared/types/data'
 
-export const InfoCenters = () => {
-  const [centers] = useState<any[]>([
-    {
-      key: 1,
-      center_name: 'Centro 1'
-    },
-    {
-      key: 2,
-      center_name: 'Centro 2'
-    },
-    {
-      key: 3,
-      center_name: 'Centro 3'
-    }
-  ])
+interface InfoCentersProps {
+  centers: ICentersDashboard[]
+}
+
+export const InfoCenters = ({centers}: InfoCentersProps) => {
+  // const [centers] = useState<any[]>([
+  //   {
+  //     key: 1,
+  //     center_name: 'Centro 1'
+  //   },
+  //   {
+  //     key: 2,
+  //     center_name: 'Centro 2'
+  //   },
+  //   {
+  //     key: 3,
+  //     center_name: 'Centro 3'
+  //   }
+  // ])
 
   useEffect(() => {
     // ProductService.getProductsSmall().then((data) =>

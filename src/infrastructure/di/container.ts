@@ -4,6 +4,7 @@ import bedrooms from '../api/services/BedroomsServices'
 import bookings from '../api/services/BookingsServices'
 import customers from '../api/services/CustomersServices'
 import invoices from '../api/services/InvoicesServices'
+import myHotel from '../api/services/MyHotelService'
 import settings from '../api/services/SettingsService'
 
 export const container: AppContainer = {
@@ -12,5 +13,6 @@ export const container: AppContainer = {
   bedroomRepository: bedrooms,
   customerRepository: customers,
   invoiceRepository: invoices,
-  settingsRepository: settings
+  settingsRepository: settings,
+  myHotelRepository: myHotel
 }

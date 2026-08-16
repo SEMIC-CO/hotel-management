@@ -3,8 +3,12 @@ import { Card } from 'primereact/card'
 import { InfoCenters } from './InfoCenters'
 import { VerticalBar } from '../../components/ui/Charts/VerticalBar'
 import { InfoRooms } from './InfoRooms'
+import { useMyHotel } from './hooks/useMyHotel'
 
 export const MyHotel = () => {
+
+  const { dashboard } = useMyHotel()
+  
   return (
     <div className='flex flex-wrap gap-2 card-dashbohard'>
       <div className='flex flex-wrap justify-between w-full'>
@@ -136,7 +140,7 @@ export const MyHotel = () => {
           </div>
         </Card>
       </div>
-      <InfoCenters />
+      <InfoCenters centers={dashboard.centros} />
       <InfoRooms />
       <VerticalBar />
     </div>

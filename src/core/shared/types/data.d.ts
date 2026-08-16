@@ -6,6 +6,26 @@ export interface IConstants {
   updated_at?: string
   updated_by?: string | number
 }
+
+export interface ICentersDashboard {
+  key?: number
+  center_id: number
+  center_name: string
+  reservasReservadas: string
+  ingresosClientes: string
+  salidasClientes: string
+  canceladas: string
+}
+export interface IDashboard {
+  reservasPendientes: string
+  reservasReservadas: string
+  ingresosClientes: string
+  salidasClientes: string
+  canceladas: string
+  centros: ICentersDashboard[]
+
+}
+
 export interface IBedrooms {
   description: string
   fecha: string
